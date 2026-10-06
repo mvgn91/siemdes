@@ -1,0 +1,37 @@
+---
+// Pasos del proceso diagnóstico — R03.3 (Reforma 03, D-R03-2).
+// Servicios y Experiencia leían el mismo JSON con markup duplicado: un archivo,
+// un dueño. Cards al estándar S01 (rounded-xl + borde filete + tile Lucide);
+// el número del paso va como eyebrow junto al tile, no como numeral gigante
+// (el numeral de sección ya está en el header de cada página).
+import IconoLucide, { type NombreIcono } from './IconoLucide.astro';
+
+interface Paso {
+  numero: string;
+  titulo: string;
+  texto: string;
+}
+interface Props {
+  pasos: Paso[];
+  /** Un icono por paso, en orden (docs/31 §4). */
+  iconos: NombreIcono[];
+}
+const { pasos, iconos } = Astro.props;
+---
+
+<ol class="mt-8 grid gap-6 md:grid-cols-3">
+  {
+    pasos.map((paso, indice) => (
+      <li class="flex flex-col rounded-xl border border-filete bg-blanco p-6">
+        <span class="flex items-center gap-3">
+          <span class="inline-flex rounded-lg bg-ambar p-2.5 text-negro" aria-hidden="true">
+            <IconoLucide nombre={iconos[indice] ?? 'clipboard-list'} />
+          </span>
+          <span class="text-etiqueta text-tinte-3" aria-hidden="true">{paso.numero}</span>
+        </span>
+        <h3 class="mt-4 text-titular-3 text-negro">{paso.titulo}</h3>
+        <p class="mt-2 text-cuerpo text-tinte-2">{paso.texto}</p>
+      </li>
+    ))
+  }
+</ol>

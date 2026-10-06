@@ -1,0 +1,742 @@
+/* Sistema de marca SIEMDES — S1-D-03.2
+   Fuente de verdad: docs/14 (kit de marca v1.0). Aqui no se decide nada nuevo:
+   solo se traduce a codigo lo que ya esta aprobado.
+
+   Tailwind 4 lee los tokens de @theme y de ahi salen las utilidades:
+   --color-negro  -> bg-negro / text-negro / border-negro
+   --color-ambar  -> bg-ambar / text-ambar
+   --font-titular -> font-titular
+   --leading-*    -> leading-*
+   --tracking-*   -> tracking-*
+
+   REGLA DURA: la paleta de marca son TRES colores (docs/14 §3.1). No se admite
+   azul, cyan, naranja, rojo, verde ni multicolor. Los tintes de §3.4 no son color
+   de marca: existen solo para jerarquizar. La guardia de marca (S1-D-03.7) revisa
+   el CSS y el HTML generados y falla el build si aparece otro color.
+*/
+
+/* `source(none)` desactiva el escaneo automatico del proyecto y abajo se declara donde
+   vive el markup. Motivo MEDIDO: con el escaneo automatico, Tailwind estaba leyendo
+   docs/** y .mvgn/** (los .md y .json hablan de "sombras", "shadow", colores de la
+   tarjeta...) y emitia clases que el sitio nunca usa — entre ellas `.shadow`, que el kit
+   prohibe. Acotarlo deja el CSS con lo que de verdad se publica y evita que un documento
+   meta una clase al sitio por accidente. Lo detecto la guardia de marca (S1-D-03.7). */
+@import "tailwindcss" source(none);
+@source "../pages";
+@source "../components";
+@source "../layouts";
+/* Las clases del boton viven aqui (las comparten Astro y las islas React). Si esta linea
+   falta, Tailwind no ve "border-2" y el boton de contorno se queda sin borde — paso de
+   verdad el 2026-09-29 y lo detecto la regla 9 de la guardia. */
+@source "../estilos";
+
+@theme {
+  /* ─── Paleta controlada (docs/14 §3.2) ─────────────────────────────── */
+  --color-negro: #18181b; /* Negro Industrial */
+  --color-ambar: #facc15; /* Amarillo de Seguridad */
+  --color-blanco: #ffffff;
+
+  /* ─── Tintes de apoyo (docs/14 §3.4) — NO son color de marca ───────── */
+  --color-tinte-2: #3f3f46; /* texto secundario */
+  --color-tinte-3: #71717a; /* etiquetas y pies */
+  --color-tinte-indice: #a1a1aa; /* indices numerados */
+  --color-filete: #e4e4e7; /* divisores de 1px */
+  --color-numeral: #eeeef0; /* numeral de fondo, marca de agua tipografica */
+
+  /* ─── Tipografias (docs/14 §4) ─────────────────────────────────────── */
+  /* Barlow manda; Inter entra cuando hay que leer corrido. */
+  --font-titular: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-cuerpo: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* ─── Escala tipografica del sitio (S1-D-04.8, 2026-09-29) ──────────────
+     ESTA TABLA ES LA QUE FALTABA, y su ausencia es la causa de la queja del operador
+     ("los textos de todas las secciones se sienten pequenos"). Se MIDIO antes de
+     escribirla, con scripts/medir-densidad.mjs sobre el sitio real a 390 px:
+
+       distribucion de tamanos ANTES  ->  14 px x 132 textos · 12 px x 65 · 16 px x 51
+                                          65% del texto del sitio por debajo de 16 px.
+
+     Esos numeros son los de Tailwind por defecto, no los del kit: docs/14 §4.2 define ROLES
+     (H1, H2, cuerpo, pie, etiqueta) y no px, asi que nadie estaba obligado a decidir un
+     suelo y el sitio se construyo mirando el nombre de la clase, no el tamano. La
+     consecuencia es concreta: el cuerpo cae a 14 px y la etiqueta de seccion a 12 px, o
+     sea la jerarquia se expresa HACIENDOSE PEQUENA en vez de en peso, familia y caja, al
+     reves de como lo hace la tarjeta, que es la referencia industrial del sistema.
+
+     La escala se nombra por ROL, no por numero: `text-cuerpo` dice para que sirve, mientras
+     que `text-sm` solo decia cuanto pesaba, y de ahi venia la deriva.
+
+        token          px     familia/peso       rol (docs/14 §4.2)
+        titular-1      38/56  Barlow 900         H1 · razon social
+        titular-2      28     Barlow 800         H2 · titulo de seccion
+        titular-3      21     Barlow 700         H3 · subtitulo, titulo de bloque
+        cifra          46/60  Barlow 900 tab.    cifra destacada (dato real)
+        indice         21     Barlow 900 tab.    numeral de seccion (decorativo,
+                                                R05.6: 38 -> 21, comparte escalon
+                                                con titular-3/lead; el titulo
+                                                resaltado da la jerarquia)
+        lead           21     Inter 400          entrada de seccion
+        cuerpo         18     Inter 400          cuerpo de texto
+        cuerpo-denso   16     Inter 400          bloques densos y notas
+        etiqueta       14     Barlow 700 caps    etiqueta corta, eyebrow
+        pie            16     Inter 500          pie, legal, direccion
+        boton          16     Barlow 800 caps    boton y CTA
+
+     SIETE ESCALONES Y NO NUEVE (auditoria del operador, 2026-09-30). La version anterior
+     tenia 14/15/16/18/20/21/28/38/46: tres pares a menos del 7% entre si (21/20 = 95.2%,
+     16/15 = 93.8%, 15/14 = 93.3%). Por debajo de ~10% de salto el ojo no lee un nivel
+     distinto, asi que la escala anunciaba nueve niveles y se veian cinco. Se resolvio asi:
+
+       - `pie` 15 -> 16. No encoge: sube al escalon de 16 y se distingue de `etiqueta`
+         (14 px) por familia y caja, no por un pixel. Era INTER 400 y el kit pide Medium.
+       - `lead` 20 -> 21. Comparte tamano con `titular-3` y se distingue por familia
+         (Inter vs Barlow) y peso (400 vs 700). Un rol puede compartir escalon; lo que no
+         puede es pedir un pixel propio.
+       - `indice`: ROL NUEVO. Los numerales decorativos 01..07 se pintaban con
+         `text-titular-1` y `text-titular-2`, es decir con el tamano de H1 y de H2. No puede
+         llamarse `numeral` porque `--color-numeral` ya genera esa clase: dos reglas para
+         `.text-numeral` y una pisa a la otra sin aviso.
+
+     Salto entre escalones: 14 -> 16 (14.3%) -> 18 (12.5%) -> 21 (16.7%) -> 28 (33%) ->
+     38 (36%). Ningun escalon por debajo del 12%. El piso sigue siendo 14 px.
+
+     PISO DURO: 14 px. No existe texto mas pequeno en el sitio y la regla 13 de la guardia
+     lo hace cumplir en cada build.
+
+     NOTA DE ALCANCE: docs/14 §4.3 pide "dos pesos por pieza, como maximo". Aqui se lee
+     como dos pesos POR BLOQUE y no por pagina: una pagina de siete secciones no es una
+     pieza de imprenta. Queda escrito para que el operador lo ratifique o lo corrija.
+  */
+  /* Se VACIA la escala numerica por defecto de Tailwind antes de definir la propia. Con
+     `--text-*: initial` las utilidades `text-sm`, `text-xs`... dejan de existir: si alguien
+     las escribiera el build NO fallaria, el elemento se quedaria con el tamano heredado y
+     el defecto se publicaria en silencio — el modo de fallo exacto que la regla 9 atrapa
+     con `border-2` (ver arriba). Por eso la regla 13 ademas las prohibe en el codigo: dos
+     capas, como con el color (regla 1) y con las clases compartidas (regla 9). */
+  --text-*: initial;
+
+  /* EL ROL IMPONE TAMANO, PESO Y TRACKING. Antes solo imponia tamano, y familia y peso se
+     escribian a mano en cada elemento: medido el 2026-09-30, `font-bold` x348 en el HTML,
+     `font-extrabold` x101, `font-black` x70. El resultado es que el MISMO rol salia con
+     tres pesos distintos segun la pagina (titular-3 llevaba 700, 800 y 900) y el peso
+     dejaba de distinguir niveles. Tailwind 4 soporta `--text-*--font-weight` y
+     `--text-*--letter-spacing`; `--text-*--font-family` NO (verificado compilando con el
+     modificador puesto y viendo que no llega al CSS emitido), asi que la familia entra por
+     la tabla de rasgos de mas abajo.
+
+     `cuerpo` y `cuerpo-denso` NO declaran peso a proposito. En un rol de texto el peso es
+     una decision de enfasis de cada uso (121 elementos del sitio son `cuerpo + font-bold`),
+     no una propiedad del rol. Si el rol lo declarara, el ganador entre `.text-cuerpo` y
+     `.font-bold` dependeria del ORDEN de las utilidades en el CSS emitido — fragilidad
+     invisible. Los roles de display (titulos, etiqueta, boton) si lo declaran, porque ahi
+     el peso ES el rol. */
+  --text-titular-1: 2.375rem; /* 38 px */
+  --text-titular-1--line-height: 1.05;
+  --text-titular-1--font-weight: 900;
+  --text-titular-1--letter-spacing: -0.01em;
+  --text-titular-2: 1.75rem; /* 28 px */
+  --text-titular-2--line-height: 1.1;
+  --text-titular-2--font-weight: 800;
+  --text-titular-2--letter-spacing: -0.01em;
+  --text-titular-3: 1.3125rem; /* 21 px */
+  --text-titular-3--line-height: 1.2;
+  --text-titular-3--font-weight: 700;
+  --text-titular-3--letter-spacing: 0em;
+  /* `wordmark`: la firma de marca del hero (orden del operador 2026-10-01: "SIEMDES" como
+     titulo grande, sin emblema). Rol PROPIO y no `titular-2` a proposito: la regla 16 reserva
+     `titular-1` y `titular-2` para los <h1>/<h2>, y el wordmark NO es un encabezado, es la
+     marca. Barlow 900 y mayusculas. Sube al escalon de 38 px (orden del operador 2026-10-01:
+     "haz mas grande SIEMDES"): comparte step con `titular-1` movil e `indice`, pero se
+     distingue por job y por caja — el H1 crece a 56 px en escritorio y el wordmark no. */
+  --text-wordmark: 2.375rem; /* 38 px */
+  --text-wordmark--line-height: 1.05;
+  --text-wordmark--font-weight: 900;
+  --text-wordmark--letter-spacing: -0.01em;
+  --text-cifra: 2.875rem; /* 46 px */
+  --text-cifra--line-height: 0.95;
+  --text-cifra--font-weight: 900;
+  --text-cifra--letter-spacing: -0.01em;
+  /* Numeral de seccion: decorativo, aria-hidden obligatorio (regla 15 de la guardia).
+     R05.6 (D-B, Revisión 2 R4): 38 -> 21 px. El numeral predominaba sobre el título
+     (38 vs 28 del h2); ahora comparte escalón con `titular-3`/`lead` y se distingue
+     por familia/peso, no por tamaño. La jerarquía la da el título resaltado. */
+  --text-indice: 1.3125rem; /* 21 px */
+  --text-indice--line-height: 1;
+  --text-indice--font-weight: 900;
+  --text-indice--letter-spacing: -0.01em;
+  --text-lead: 1.3125rem; /* 21 px */
+  --text-lead--line-height: 1.4;
+  --text-lead--font-weight: 400;
+  --text-cuerpo: 1.125rem; /* 18 px */
+  --text-cuerpo--line-height: 1.4;
+  --text-etiqueta: 0.875rem; /* 14 px */
+  --text-etiqueta--line-height: 1.2;
+  --text-etiqueta--font-weight: 700;
+  --text-etiqueta--letter-spacing: 0.18em;
+  --text-pie: 1rem; /* 16 px */
+  --text-pie--line-height: 1.45;
+  --text-pie--font-weight: 500;
+  /* `etiqueta-bloque` y `chip`: los DOS ULTIMOS huecos por los que el marcado todavia ponia
+     familia y peso a mano (estandarizacion del 2026-09-30). El sitio tenia dos patrones
+     tipograficos reales sin rol que los gobernara: 21 elementos con «Barlow 700 mayusculas a
+     18 px» (navegacion, titulos de grupo, nombres de canal, cabeceras de columna del pie) y
+     los chips de marca/modelo con «Barlow 800 a 16 px». Escritos a mano son exactamente el
+     material del que salio la deriva: el mismo aspecto con el peso cambiado segun la pagina.
+     Con rol, la guardia puede exigir que NINGUNA etiqueta de marcado nombre una familia. */
+  --text-etiqueta-bloque: 1.125rem; /* 18 px */
+  --text-etiqueta-bloque--line-height: 1.2;
+  --text-etiqueta-bloque--font-weight: 700;
+  --text-etiqueta-bloque--letter-spacing: 0.025em;
+  /* `menu`: el rotulo de navegacion, un escalon por debajo de `etiqueta-bloque` (R05.29,
+     orden del operador 2026-10-05: "ajusta un poco el texto en el header, un poco mas chico
+     el texto ahi"). Es `etiqueta-bloque` exactamente —misma familia, mismo peso, mismas
+     mayusculas y mismo tracking— a 16 px, y su propia caja porque su restriccion es
+     distinta: `etiqueta-bloque` no tiene que caber en un ancho, el menu si.
+
+     MEDIDO, no estimado (`.mvgn/tools/fonts/barlow`, el mismo TTF que la guardia mide):
+     con seis items a 18 px el nav mide 596.3 px de caja, y el hueco real que le queda a
+     768 px de ventana es 434.6 px (768 - 32 de `px-4` - 44 de la placa del logo - 16 de
+     `gap-4` - 24 de `md:ml-6` - 217.4 del CTA). No cabe ni bajar a 14 px, que es el piso
+     de la escala: 470.5 px de nav contra 434.6 px de hueco. Por eso este rol baja a 16 px
+     (543.4 px) Y el nav de escritorio arranca en `lg`, don de si sobra: 147.2 px a 1024.
+     El texto de un menu se puede achicar; el de un titular no. */
+  --text-menu: 1rem; /* 16 px */
+  --text-menu--line-height: 1.2;
+  --text-menu--font-weight: 700;
+  --text-menu--letter-spacing: 0.025em;
+  --text-chip: 1rem; /* 16 px */
+  --text-chip--line-height: 1.2;
+  --text-chip--font-weight: 800;
+  --text-chip--letter-spacing: 0em;
+  --text-boton: 1rem; /* 16 px */
+  --text-boton--line-height: 1.1;
+  --text-boton--font-weight: 800;
+  --text-boton--letter-spacing: 0.025em;
+  /* `cifra-etiqueta`: etiqueta de dato en Inter (R04.11, revision Armand 1 O6).
+     El operador pidio las cifras en "mayuscula compacta, igual en inter": ningun rol
+     existente lo daba (`etiqueta`/`etiqueta-bloque` son Barlow). Inter SemiBold 14 px
+     con tracking amplio: comparte escalon con `etiqueta` y se distingue por familia,
+     como `lead` comparte con `titular-3`. Pesa 600 (kit 4.2: Inter hasta SemiBold). */
+  --text-cifra-etiqueta: 0.875rem; /* 14 px */
+  --text-cifra-etiqueta--line-height: 1.2;
+  --text-cifra-etiqueta--font-weight: 600;
+  --text-cifra-etiqueta--letter-spacing: 0.08em;
+}
+
+/* Los dos roles que CRECEN con el ancho. En movil mandan 38 y 46 px; a partir de 64 rem
+   pasan a 56 y 60. Se redefine la VARIABLE y no la clase, a proposito: si el tamano
+   dependiera del marcado, cada h1 llevaria dos nombres de tamano y la regla 13 tendria que
+   verificar un par de utilidades en vez de un rol. Asi el rol se escribe una vez. */
+@media (min-width: 64rem) {
+  :root {
+    --text-titular-1: 3.5rem; /* 56 px */
+    --text-indice: 3.5rem; /* 56 px */
+    --text-cifra: 3.75rem; /* 60 px */
+  }
+
+  /* ─── Ritmo tipografico (docs/14 §4.2) ─────────────────────────────── */
+  --leading-titular: 1.1;
+  --leading-cuerpo: 1.4;
+  --tracking-titular: -0.01em;
+  /* Ancho maximo de lectura: el cuerpo en Inter no debe pasar de ~70 caracteres. Con el
+     cuerpo en 18 px, 68ch darian ~600 px, que en una columna de max-w-6xl (1152 px) deja
+     media pantalla vacia a la derecha. Se acorta a 56ch (~495 px) para que la columna de
+     texto se lea como columna y no como una linea perdida en un contenedor ancho. */
+  --medida-lectura: 56ch;
+
+  /* ─── Ritmo del espacio ───────────────────────────────────────────────────
+     NO hay tokens de espaciado aqui, y es deliberado. La primera version de este
+     comentario declaraba `--espacio-seccion` / `--espacio-bloque` y pretendia usarlos, pero
+     las 7 paginas usan las utilidades de Tailwind (`mt-12`, `py-10`), asi que los tokens
+     habrian quedado muertos: habrian parecido la fuente de verdad del ritmo sin
+     Mandar sobre nada. Declarar un token que no gobierna el resultado es peor que no
+     declararlo, porque el proximo que lea el archivo creera que el ritmo vive ahi.
+
+     El ritmo real vive en las utilidades, y su techo esta en la regla 14 de la guardia:
+     ninguna separacion de seccion puede pasar de 48 px ni un `gap` de 40 px. MEDIDO el
+     2026-09-29: el sitio usaba mt-16 (64 px) x 12 y mt-20 (80 px) x 5, y en la portada las
+     filas 500-1000 px del render-tenian 6.25% de cobertura de tinta — 500 px de pagina
+     para tres parrafos cortos. Ese es el "mucho espacio" que reporto el operador. */
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  /* Fondo claro por regla del kit: el contexto web esta en la fila "fondo claro"
+     de §3.3 (negro 10-20%, ambar 5-10%, resto blanco). El negro va en bloques. */
+  body {
+    background-color: var(--color-blanco);
+    color: var(--color-negro);
+    font-family: var(--font-cuerpo);
+    /* El cuerpo del sitio es 18 px, no el 16 px por defecto del navegador. Ponerlo aqui y
+       no solo en la escala importa: cualquier parrafo que se quede sin clase de tamano
+       hereda el rol correcto en vez de caer al 16 px del navegador, que es como se
+       colaba el texto pequeno que el operador señalo. */
+    font-size: var(--text-cuerpo);
+    line-height: var(--leading-cuerpo);
+  }
+
+  /* El peso por nivel sale de docs/14 §4.2: H1 900 · H2 800 · H3 700. Antes los tres iban
+     en 900 y el eje de peso del kit NO existia en el H2: medido el 2026-09-30, los <h2> del
+     sitio salian en 700/900 y el 800 del kit no aparecia en ninguno de los 65.
+
+     Este cambio es inerte hoy y por eso es seguro: los 81 encabezados del sitio escriben su
+     peso a mano, ninguno lo hereda de aqui (verificado elemento por elemento). Corrige el
+     defecto para el codigo que venga, que es donde muerde. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-titular);
+    line-height: var(--leading-titular);
+    letter-spacing: var(--tracking-titular);
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-weight: 900;
+  }
+
+  h2 {
+    font-weight: 800;
+  }
+
+  h3 {
+    font-weight: 700;
+  }
+
+  /* ─── Rasgos que el rol no puede llevar en Tailwind ──────────────────────────
+     Dos cosas que el token `--text-*` no admite y que por eso se repetian a mano en cada
+     uso (`text-etiqueta` iba 13 veces con `uppercase` y `tracking-[0.18em]` escrito al
+     lado; el color del numeral decorativo, tres veces):
+       1. la FAMILIA — `--text-*--font-family` no existe en Tailwind 4.3.3;
+       2. `text-transform` y el COLOR del numeral decorativo, que no son del namespace
+          `--text-*`.
+     Va con `:where()` (especificidad 0) para que cualquier utilidad explicita lo pueda
+     pisar sin pelearse con la cascada, y en `base` para que el orden sea el previsible:
+     base < utilities. */
+  :where(
+    .text-titular-1,
+    .text-titular-2,
+    .text-titular-3,
+    .text-wordmark,
+    .text-cifra,
+    .text-indice,
+    .text-etiqueta,
+    .text-etiqueta-bloque,
+    .text-menu,
+    .text-chip,
+    .text-boton
+  ) {
+    font-family: var(--font-titular);
+  }
+
+  :where(.text-lead, .text-cuerpo, .text-pie, .text-cifra-etiqueta) {
+    font-family: var(--font-cuerpo);
+  }
+
+  :where(
+    .text-etiqueta,
+    .text-etiqueta-bloque,
+    .text-menu,
+    .text-boton,
+    .text-wordmark,
+    .text-cifra-etiqueta
+  ) {
+    text-transform: uppercase;
+  }
+
+  /* Mayusculas en los TITULOS (orden del operador 2026-10-01: "los textos principales deben
+     ir en mayusculas"). Se suma AL ROL y no al marcado: la regla del sistema es que el rol
+     imponga el aspecto y el marcado no lo repita. Afecta a los H1 y H2 del sitio completo. */
+  :where(.text-titular-1, .text-titular-2) {
+    text-transform: uppercase;
+  }
+
+  :where(.text-cifra, .text-indice) {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* El color del numeral va DENTRO del rol. El 2026-09-30 se encontraron 12 numerales
+     decorativos con `text-numeral` (#EEEEF0) sobre fondo BLANCO: 1.16:1, invisibles, en
+     servicios (principales x6, proceso x3) y experiencia (proceso x3). La guardia no los
+     veia porque llevaban `aria-hidden`, que es exactamente el modo de fallo que docs/14
+     §4.3 creia haber cerrado. Con el color en el rol no depende de que cada uso se
+     acuerde de que sobre fondo claro el numeral es negro. */
+  :where(.text-indice) {
+    color: var(--color-negro);
+  }
+
+  p {
+    max-width: var(--medida-lectura);
+  }
+
+  /* Cifras siempre tabulares cuando van en columna (docs/14 §4.2) */
+  [data-cifras],
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background-color: var(--color-ambar);
+    color: var(--color-negro);
+  }
+
+  /* Foco visible sin inventar color: ambar de marca */
+  :focus-visible {
+    outline: 3px solid var(--color-ambar);
+    outline-offset: 2px;
+  }
+
+  /* El ambar NUNCA es texto sobre blanco (1.7:1, falla WCAG AA — docs/14 §3.3).
+     Sobre negro si, y sobre ambar el texto va en negro. */
+}
+
+@utility medida-lectura {
+  max-width: var(--medida-lectura);
+}
+
+/* Cintillo movil de marcas (docs/30, brief §1.8): loop infinito discreto.
+   La pista mide 2 copias identicas; -50% cierra el ciclo sin salto.
+   Pausa en hover/foco; sin movimiento con prefers-reduced-motion. */
+@keyframes cintillo-desliza {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.cintillo-pista {
+  display: flex;
+  width: max-content;
+  /* Capa propia de composicion (R04.5): el trabeo al redimensionar venia de repintar
+     la pista completa en cada frame de resize; aislada, el navegador la mueve sin
+     recalcular el layout de las 44 imagenes. */
+  will-change: transform;
+  animation: cintillo-desliza 45s linear infinite;
+}
+
+.cintillo:hover .cintillo-pista,
+.cintillo:focus-within .cintillo-pista {
+  animation-play-state: paused;
+}
+
+/* Monocromo por defecto, color al entrar a la franja (orden del operador 2026-10-01).
+   El filtro va sobre la <img> y no sobre el archivo: los originales de terceros no se
+   tocan y el hover tiene a donde volver. Es la franja ENTERA la que se colorea, no una
+   marca suelta: mientras el cursor esta encima (o alguien la enfoca con el teclado) las
+   marcas se leen juntas en gris y el color aparece de golpe como una sola pieza. */
+.cintillo img {
+  filter: grayscale(1);
+  transition: filter 250ms ease;
+}
+
+.cintillo:hover img,
+.cintillo:focus-within img {
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cintillo-pista {
+    animation: none;
+    will-change: auto;
+  }
+
+  .cintillo img {
+    transition: none;
+  }
+}
+
+/* Titulo resaltado (R05.6, D-B, Revisión 2 R4): el h2 de seccion deja de ser plano
+   y va sobre linea amarilla — fondo ambar con texto negro, como ya esta en los
+   titulos. El h2 conserva su rol `titular-2` (regla 16 intacta); el resaltado es
+   CAJA, no tamaño. Sin capas: el CSS sin @layer gana a las utilidades, asi que el
+   negro pisa a `text-blanco` en las secciones oscuras sin pelear especificidad. */
+.titulo-resaltado {
+  display: inline-block;
+  background-color: var(--color-ambar);
+  color: var(--color-negro);
+  padding: 0.25rem 1rem;
+}
+
+/* El header como INDICE (R05.28, orden del operador 2026-10-05: "que sobre el menu ya
+   existente se vea como SOLICITAR DIAGNOSTICO, texto negro sobre amarillo"; "estoy en
+   contacto y ahi se veria la tarjeta amarilla"). El item de la seccion en la que se esta
+   se convierte en la TARJETA AMBAR —negro sobre ambar, 11.57:1 medido, el mismo par que el
+   CTA—, sin invented un elemento nuevo en la cabecera. La pone `seccion-activa.ts` (y el
+   servidor en las paginas internas, con la misma clase).
+   Antes esto era un subrayado ambar de 4 px; la tarjeta lo sustituye, no se suma.
+   El color vive en CSS y no en utilidades, asi que la cascada de contraste de la guardia
+   (regla 12) no lo ve: se documenta aqui el par exacto —el MISMO que mide para el CTA
+   `bg-ambar text-negro` (#18181b sobre #facc15, 11.57:1)— en vez de fingir que se midio.
+   Los dos estados de hover estan escritos a proposito: las utilidades `hover:text-blanco` y
+   `hover:bg-tinte-2` de los items inactivos mediran 1.53:1 y 1.70:1 sobre la tarjeta si
+   ganaran, y esta regla los pisa por especificidad. */
+header nav a.seccion-activa {
+  background-color: var(--color-ambar);
+  color: var(--color-negro);
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+header nav a.seccion-activa:hover {
+  background-color: var(--color-ambar);
+  color: var(--color-negro);
+}
+/* El item del nav de escritorio es una tarjeta compacta; el del desplegable movil es una
+   fila completa, y por eso el padding se declara solo en el nav principal: aplicado a las
+   filas `block px-4 py-3` las deformaria. */
+header nav[data-nav='principal'] a.seccion-activa {
+  padding: 0.25rem 0.75rem;
+}
+
+/* Revelado por scroll (R05.19, orden del operador 2026-10-05): los contenidos aparecen
+   y desaparecen en medida que se hace scroll. El estado oculto SOLO existe bajo
+   `.revela-listo` (lo pone `revelado.ts` y solo sin `prefers-reduced-motion`): sin JS
+   o con movimiento reducido, todo visible desde el primer frame. Solo
+   transform+opacity, dentro del criterio D-D. */
+.revela-listo [data-revela] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 250ms ease,
+    transform 250ms ease;
+}
+
+.revela-listo [data-revela].visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Viajeros (R05.19): el CTA que acompaña y el botón de subir. Entran y salen por
+   opacidad con la clase que pone `viajeros.ts`; sin JS no existen. Sin
+   `pointer-events` cuando están ocultos para no tapar nada. */
+.viajero {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+
+.viajero-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ─── Material acrilico (R05.26, orden del operador 2026-10-05) ───────────────────
+   "No es glass real, necesito glass fluent looking": el operador pidio el material
+   translucido de Fluent (relleno con alfa + backdrop-filter + filo claro), no el gris
+   plano de R05.25. Es la ENMIENDA puntual al veto 6 (docs/14 §2.6, docs/30 §1): el
+   desenfoque entra y SOLO aqui. Lo que sigue vetado, igual que antes: sombra de caja,
+   drop-shadow, blur de elemento, gradientes y texturas (regla 5b, ahora con la nueva
+   capa que prohibe un `backdrop-filter` fuera de estas dos clases).
+   El alfa se compone siempre con un token de la paleta (`color-mix`), nunca con un
+   rgb suelto: el material sigue siendo negro/ambar/blanco, no un color nuevo (regla 1,
+   que desde R05.26 tambien caza `rgb()`/`hsl()` sueltos).
+   `backdrop-filter` no se ve sobre una banda plana — no hay nada que desenfoce ahi — asi
+   que lo que lee el ojo es la translucidez mas el filo, y por eso el filo es mas claro
+   que el relleno en los dos modos. Compuestos medidos (los usa la cascada de contraste de
+   la guardia, no son aproximaciones):
+     .acrilico        sobre #EEEEF0 y #FFFFFF -> #FAFAFA / #FFFFFF
+     .acrilico-oscuro sobre #18181B          -> #2F2F32  (blanco 10%)
+   Contraste: blanco sobre #2F2F32 = 13.36:1; ambar = 8.72:1; negro sobre #FAFAFA = 19.4:1.
+   R05.31 (arreglo del hover, 2026-10-05): este bloque vive en `@layer components` A
+   PROPOSITO, no sin capa. Sin capa el CSS gana a las utilidades vengan con la
+   especificidad que vengan, y eso mato el hover ambar de las cifras (R04.23): el
+   `background-color` del material pisaba a `group-hover:bg-ambar` aunque la utilidad
+   tenga mas especificidad. En `components` la capa `utilities` (que Tailwind emite
+   despues) vuelve a ganar y el hover vira a ambar. `.titulo-resaltado` y el nav activo
+   se quedan SIN capa porque ahi pisar a la utilidad es lo querido y esta documentado. */
+@layer components {
+  .acrilico,
+  .acrilico-oscuro {
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+  }
+
+  /* Modo claro: se usa sobre las bandas claras (numeral y blanco). */
+  .acrilico {
+    background-color: color-mix(in oklab, var(--color-blanco) 72%, transparent);
+    border-color: color-mix(in oklab, var(--color-negro) 16%, transparent);
+  }
+
+  /* Modo oscuro: se usa sobre las bandas negras (cifras, contacto). */
+  .acrilico-oscuro {
+    background-color: color-mix(in oklab, var(--color-blanco) 10%, transparent);
+    border-color: color-mix(in oklab, var(--color-blanco) 24%, transparent);
+  }
+
+  /* Respuesta animada al hover (R04.8, criterio D-D aprobado 2026-10-05): la tarjeta
+     respira hacia arriba 4 px en 200 ms. Solo transform+opacity: sombras, 3D y
+     resplandores siguen vetados (kit 3.x, regla 5b). Sin movimiento con
+     prefers-reduced-motion. En `components` por el mismo motivo que el material:
+     sin capa, `.eleva` no rompia nada hoy, pero cualquier utilidad futura que toque
+     `transform` perderia contra el sin avisar. */
+  .eleva {
+    transition:
+      transform 200ms ease,
+      background-color 200ms ease,
+      border-color 200ms ease,
+      color 200ms ease;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .eleva:hover {
+      transform: translateY(-4px);
+    }
+  }
+
+  /* Splash de entrada (R05.37, orden del operador 2026-10-05: fondo blanco, logo
+     arriba, barra de carga amarilla; sencillo). Solo transform+opacity (D-D): la barra
+     llena con scaleX (no con width, que recalcula layout) y la salida es un fundido.
+     En `@layer components` por la regla de R05.31 (convive con utilidades sin pisarlas).
+     Sin JS tambien se quita: `splash-auto` lo apaga a los 3 s; con JS sale antes (al
+     `load` con minimo de 650 ms, tope 1600 ms). Con movimiento reducido no hay splash:
+     se apaga en el acto (script) o ni se muestra (CSS). */
+  .splash {
+    z-index: 60;
+    transition:
+      opacity 250ms ease,
+      visibility 0s linear 250ms;
+    animation: splash-auto 0s linear 3s forwards;
+  }
+
+  .splash-fuera {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .splash-barra {
+    transform: scaleX(0);
+    transform-origin: left center;
+    animation: splash-carga 1400ms ease-out forwards;
+  }
+
+  @keyframes splash-carga {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes splash-auto {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .splash {
+      display: none;
+    }
+  }
+}
+
+/* Hipervinculo dinamico (R04.13, revision Armand 1 O8): el subrayado ambar se retira
+   (el ambar queda para bloques y acentos, no para texto corrido). El enlace subraya en
+   su propio color y al hover entran dos respuestas: la flecha avanza 4 px y un diamante
+   ambar aparece delante de ella. Todo transform+opacity dentro de D-D. Se activa con
+   `.group:hover` (los enlaces ya son `.group`). */
+.pin-dinamico {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  transform: rotate(45deg) scale(0.5);
+  background-color: var(--color-ambar);
+  opacity: 0;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+.flecha-dinamica {
+  display: inline-flex;
+  transition: transform 200ms ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .group:hover .pin-dinamico {
+    opacity: 1;
+    transform: rotate(45deg) scale(1);
+  }
+
+  .group:hover .flecha-dinamica {
+    transform: translateX(4px);
+  }
+}
+
+/* Cifras de Inicio — revelado escalonado (overhaul 2026-10-05, operador: "algo mas
+   dinamico, con movimiento"). El numero REAL se publica en el HTML; el script lo cuenta
+   de 0 al valor y solo entonces entra esta animacion. Si el script no corre, la cifra se
+   ve tal cual (el estado por defecto es visible). Solo transform+opacity, dentro de D-D;
+   con prefers-reduced-motion no se anima y el numero queda quieto. `--retraso` lo fija
+   cada celda desde el marcado para escalonar la entrada. */
+@keyframes cifra-entra {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* R05.31: `backwards`, no `both`. Con `both` el keyframe final (`transform: none`)
+     queda aplicado PARA SIEMPRE y, como las animaciones ganan a las declaraciones,
+     el `translateY(-4px)` de `.eleva:hover` no se veia nunca: ese era el hover muerto.
+     Con `backwards` la entrada se ve igual (durante el retraso rige el `from` y luego
+     anima hasta el estilo natural, que es identico al `to`), pero al terminar la
+     animacion suelta el `transform` y el hover vuelve a respirar. */
+  .cifras-visible .cifra {
+    animation: cifra-entra 520ms ease backwards;
+    animation-delay: var(--retraso, 0ms);
+  }
+}
+
+/* Hero de Inicio (orden del operador 2026-10-01): fundido cruzado de las dos imagenes de
+   fondo. Sin JS: dos <img> apiladas y una animacion con las dos mitades del ciclo
+desfasadas 180 grados (delay negativo de medio periodo), de modo que mientras una baja la
+   otra sube — un cruce real, no un corte. Ciclo 12 s, 6 s por imagen, ~1.2 s de cruce. Con
+   prefers-reduced-motion no se anima: se ve la primera imagen y ya. */
+@keyframes hero-fundido {
+  0% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.hero-slide img {
+  opacity: 0;
+  animation: hero-fundido 12s linear infinite;
+}
+
+.hero-slide img:nth-child(2) {
+  animation-delay: -6s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide img {
+    animation: none;
+  }
+
+  .hero-slide img:first-child {
+    opacity: 1;
+  }
+}

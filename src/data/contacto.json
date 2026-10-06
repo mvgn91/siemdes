@@ -1,0 +1,52 @@
+{
+  "canales": [
+    {
+      "id": "whatsapp",
+      "nombre": "WhatsApp",
+      "texto": "Diagnóstico, visita o cotización por WhatsApp.",
+      "cta": "Escribir por WhatsApp",
+      "fuente": "docs/05 C102–C108, C93–C101 · retoque de tono operador 2026-10-05 (R05.21)"
+    },
+    {
+      "id": "resenas",
+      "nombre": "Reseña en Google",
+      "texto": "Reseñas de clientes en el perfil de Google.",
+      "cta": "Dejar una reseña",
+      "fuente": "docs/11, operador 2026-09-29 (enlace verificado) · retoque de tono operador 2026-10-05 (R05.21)"
+    }
+  ],
+  "solicitudes": [
+    {
+      "id": "diagnostico",
+      "mensaje": "Hola, quiero solicitar un diagnóstico para mi equipo.",
+      "fuente": "docs/05 C102–C108"
+    },
+    {
+      "id": "visita",
+      "mensaje": "Hola, quiero solicitar una visita para revisar mi equipo en sitio.",
+      "fuente": "docs/05 C102–C108, C46–C50"
+    },
+    {
+      "id": "cotizacion",
+      "mensaje": "Hola, quiero solicitar una cotización para el trabajo de mi equipo.",
+      "fuente": "docs/05 C102–C108"
+    }
+  ],
+  "pendientes": [
+    {
+      "dato": "Horarios de atención",
+      "motivo": "V-008 sigue parcial: no hay horario confirmado. Los canales lo necesitan para publicarse, porque V-009 pide la llamada con horario definido.",
+      "fuente": "V-008, docs/11, docs/15 B-03"
+    },
+    {
+      "dato": "Llamada telefónica como vía secundaria",
+      "motivo": "V-009 la admite solo con horarios definidos y C103 la marca como canal no deseado. Sin horario confirmado, el sitio muestra únicamente WhatsApp.",
+      "fuente": "V-009, docs/05 C103"
+    },
+    {
+      "dato": "Aviso de privacidad",
+      "motivo": "GA4 y el contacto por WhatsApp lo requieren (LFPDPPP). El texto no se inventa: lo redacta y aprueba el operador antes de publicarse.",
+      "fuente": "docs/15 B-05"
+    }
+  ]
+}

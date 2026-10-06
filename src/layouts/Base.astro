@@ -1,0 +1,382 @@
+---
+// Layout base del sitio SIEMDES — S1-D-03.3
+//
+// Reglas del kit que estan resueltas aqui y no se deben romper:
+//  - Fondo claro: el contexto web vive en la fila "fondo claro" de docs/14 §3.3
+//    (negro 10-20%, ambar 5-10%, resto blanco). El negro va en bloques, no de fondo general.
+//  - El ambar nunca es texto sobre blanco (1.7:1). Sobre negro si, y como fondo con texto negro (14.3:1).
+//  - El logotipo no se recrea ni se deforma: se usan los assets oficiales de MEDIA/
+//    (color sobre blanco en cabecera; el claro-ambar ya autorizado sobre el pie negro).
+//  - La razon social va LITERAL, en mayusculas y sin acentos (L6, docs/14 §1.1).
+import '../styles/marca.css';
+import '@fontsource/barlow/latin-600.css';
+import '@fontsource/barlow/latin-700.css';
+import '@fontsource/barlow/latin-800.css';
+import '@fontsource/barlow/latin-900.css';
+import '@fontsource-variable/inter/wght.css';
+
+// Los logos NO se importan desde MEDIA/ (399 KB): se usan los derivados de
+// public/marca/, generados por scripts/preparar-assets.mjs a partir del asset oficial
+// por reescalado mecanico. El asset original queda intacto y es la fuente.
+import { NAVEGACION, SITIO } from '../data/navegacion';
+import { datosEstructurados, jsonLd } from '../data/schema';
+import IconoLucide from '../components/IconoLucide.astro';
+import Boton from '../components/Boton.astro';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  /** Ruta de la imagen social (1200x630) que se emite en Open Graph y Twitter.
+   *  OBLIGATORIA en las 7 paginas: la guardia de marca la exige (regla 10). Sin ella el
+   *  enlace llega sin imagen al compartirlo, que es justo el caso de uso real del sitio. */
+  ogImagen?: string;
+  /** La 404 (S1-D-01.3): sin canonica y siempre fuera del indice, aunque se publique. */
+  fueraDeIndice?: boolean;
+  /** Tema del encabezado (docs/28 §1.6): 'oscuro' solo en Inicio rediseñado.
+   *  Default 'claro': las internas no cambian. B-08 sigue abierto para el resto. */
+  encabezado?: 'claro' | 'oscuro';
+  /** Splash de entrada (R05.37): fondo blanco + logo + barra amarilla. Opt-in SOLO para
+   *  la landing: las internas y /ir/* no lo llevan (en /ir/* seria un destello antes de
+   *  redirigir). */
+  splash?: boolean;
+}
+
+const { titulo, descripcion, ogImagen, fueraDeIndice = false, encabezado = 'claro', splash = false } = Astro.props;
+const oscuro = encabezado === 'oscuro';
+const ruta = Astro.url.pathname;
+const canonical = Astro.site && !fueraDeIndice ? new URL(ruta, Astro.site).href : undefined;
+
+// Las URLs de las imagenes sociales tienen que ser ABSOLUTAS: los previsualizadores de
+// WhatsApp, Facebook y X no resuelven rutas relativas. Se derivan de `site`, asi que cuando
+// se cierre B-02 con el dominio real quedan correctas sin tocar este archivo.
+const ogUrl = Astro.site ? new URL(ruta, Astro.site).href : undefined;
+const ogImagenAbsoluta = Astro.site && ogImagen ? new URL(ogImagen, Astro.site).href : undefined;
+
+// Datos estructurados del negocio (S1-D-04.9). LocalBusiness con direccion y telefono
+// verificados; sin horario (B-03), sin valoracion y sin coordenadas: no se inventa nada.
+const datosLd = datosEstructurados(Astro.site);
+
+const esActiva = (destino: string): boolean =>
+  destino === '/' ? ruta === '/' : ruta.startsWith(destino.replace(/\/$/, ''));
+
+
+// El mensaje va prellenado: el visitante no tiene que explicar nada desde cero.
+const mensaje = 'Hola, quiero solicitar un diagnóstico para mi equipo.';
+const waHref = `https://wa.me/${SITIO.whatsapp.numero}?text=${encodeURIComponent(mensaje)}`;
+const { calle, cp, municipio, estado } = SITIO.direccion;
+---
+
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {(!SITIO.publicado || fueraDeIndice) && <meta name="robots" content="noindex" />}
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:site_name" content={SITIO.nombre} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    {ogUrl && <meta property="og:url" content={ogUrl} />}
+    {
+      ogImagenAbsoluta && (
+        <>
+          <meta property="og:image" content={ogImagenAbsoluta} />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content={`${SITIO.nombre} — ${titulo}`} />
+        </>
+      )
+    }
+    <meta name="twitter:card" content={ogImagenAbsoluta ? 'summary_large_image' : 'summary'} />
+    <meta name="theme-color" content="#18181b" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon-16.png" sizes="16x16" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <slot name="head" />
+    <script type="application/ld+json" set:html={jsonLd(datosLd)} />
+  </head>
+  <body class="pb-10 md:pb-0">
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-ambar focus:px-4 focus:py-2 focus:text-etiqueta-bloque focus:text-negro"
+      >Saltar al contenido</a
+    >
+
+    {
+      splash && (
+        <div id="splash" class="splash fixed inset-0 flex flex-col items-center justify-center gap-6 bg-blanco" aria-hidden="true">
+          <img
+            src="/marca/logo-color-176.png"
+            width="192"
+            height="176"
+            alt=""
+            aria-hidden="true"
+            class="h-24 w-auto md:h-32"
+            loading="eager"
+            decoding="async"
+          />
+          <div class="h-1 w-48 bg-numeral" aria-hidden="true">
+            <span class="splash-barra block h-full w-full bg-ambar" aria-hidden="true" />
+          </div>
+        </div>
+        <script>
+          const splash = document.getElementById('splash');
+          if (splash) {
+            const quitar = () => splash.classList.add('splash-fuera');
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+              quitar();
+            } else {
+              const inicio = performance.now();
+              const espera = () => {
+                const pasado = performance.now() - inicio;
+                if (document.readyState === 'complete' || pasado > 1600) quitar();
+                else window.setTimeout(espera, 100);
+              };
+              window.setTimeout(espera, 650);
+            }
+          }
+        </script>
+      )
+    }
+
+    <header class:list={['fixed top-0 z-50 w-full border-b', oscuro ? 'border-negro bg-negro text-blanco' : 'border-filete bg-blanco']}>
+      <div class="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
+        <a href="/" class="flex shrink-0 items-center" aria-label={`${SITIO.nombre} — inicio`}>
+          {/* Placa squircle (orden del operador 2026-10-01): el emblema oficial tiene la tinta
+              NEGRA y fondo transparente, asi que sobre la cabecera oscura de Inicio no se
+              veia. Va dentro de un cuadrado blanco con borde ambar que le da fondo SIN
+              rellenar ni deformar el trazo. Se usa el asset COLOR (tinta negra) y no la
+              variante claro: el emblema claro seria invisible sobre el blanco de la placa. */}
+          <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-ambar bg-blanco text-negro">
+            <img
+              src="/marca/logo-color-88.png"
+              srcset="/marca/logo-color-176.png 2x"
+              width="96"
+              height="88"
+              alt={SITIO.nombre}
+              class="h-9 w-auto"
+            />
+          </span>
+        </a>
+
+        {/* R05.29: el nav de escritorio pasa de `md` (768) a `lg` (1024) y baja a 16 px (`text-menu`).
+            MEDIDO: con seis items no cabe en 768 ni a 14 px, que es el piso de la escala
+            (470.5 px de nav contra 434.6 px de hueco). A 1024 y 16 px sobran 147.2 px. Entre
+            768 y 1023 el sitio usa el desplegable, que ya existia y ya estaba medido. */}
+        <nav class="ml-auto hidden items-center gap-6 lg:flex" data-nav="principal" aria-label="Navegación principal">
+          {
+            NAVEGACION.map((item) => (
+              <a
+                href={item.ruta}
+                aria-current={esActiva(item.ruta) ? 'page' : undefined}
+                class:list={[
+                  'text-menu',
+                  // R05.28: el item de la seccion en la que se esta es la TARJETA AMBAR
+                  // (`.seccion-activa`, marca.css), no un subrayado. En la landing el
+                  // servidor marca solo "Inicio" —que es la ruta— y de ahi en adelante lo
+                  // lleva el scroll-spy, que apaga "Inicio" al entrar en una seccion.
+                  esActiva(item.ruta)
+                    ? 'seccion-activa'
+                    : oscuro
+                      ? 'text-tinte-indice hover:text-blanco'
+                      : 'text-tinte-2 hover:text-negro',
+                ]}
+              >
+                {item.etiqueta}
+              </a>
+            ))
+          }
+        </nav>
+
+        <a
+          href={waHref}
+          data-cta="wa-cabecera"
+          class="ml-auto hidden bg-ambar px-4 py-2 text-boton text-negro hover:bg-negro hover:text-ambar lg:ml-6 lg:inline-block"
+          >Solicitar diagnóstico</a
+        >
+
+        {/* R05.29: los tres van al mismo breakpoint que el nav (`lg`), no a `md`. Si el nav se fue
+            a `lg` y el CTA se quedara en `md`, de 768 a 1023 se veria el CTA suelto sin menu
+            al lado: dos cosas distintas para la misma franja de ancho. */}
+        <details class="relative ml-auto lg:hidden">
+          <summary
+            class:list={[
+              'cursor-pointer list-none border-2 px-3 py-2 text-etiqueta',
+              oscuro ? 'border-blanco text-blanco' : 'border-negro',
+            ]}
+            >Menú</summary
+          >
+          <nav
+            class:list={[
+              'absolute right-0 z-20 mt-2 w-60 border py-2',
+              oscuro ? 'border-blanco bg-negro' : 'border-negro bg-blanco',
+            ]}
+            data-nav="movil"
+            aria-label="Navegación principal (móvil)"
+          >
+            {
+              NAVEGACION.map((item) => (
+                <a
+                  href={item.ruta}
+                  aria-current={esActiva(item.ruta) ? 'page' : undefined}
+                  class:list={[
+                    'block px-4 py-3 text-etiqueta-bloque',
+                    // Mismo estado activo que en escritorio, pero como FILA completa: el
+                    // padding lo pone el marcado y `.seccion-activa` solo pinta ambar + texto
+                    // negro (marca.css). El hover del item activo lo pisa la misma regla: sin
+                    // eso, sobre ambar un hover a tinte-2 dejaria negro sobre gris (1.70:1).
+                    esActiva(item.ruta) ? 'seccion-activa' : '',
+                    oscuro ? 'hover:bg-tinte-2' : 'hover:bg-numeral',
+                  ]}
+                >
+                  {item.etiqueta}
+                </a>
+              ))
+            }
+          </nav>
+        </details>
+      </div>
+      <div class="h-1 bg-ambar" aria-hidden="true"></div>
+    </header>
+
+    {/* R05.29: era `pt-[68px]` y el header mide 72 px — 68 de contenido (`py-3` 24 + placa `h-11` 44)
+        + 4 de su banda ambar `h-1`. MEDIDO en el render: la banda ambar ocupa las filas
+        68..71, o sea que se comia los primeros 4 px de la caja del hero. El alto del header
+        esta en dos sitios y por eso divergieron; ahora los dos son 72. */}
+    <main id="contenido" class="pt-[72px]">
+      <slot />
+    </main>
+
+    {/* R05.32 (opcion B "Boton ambar", orden del operador 2026-10-05): el pie vuelve a los
+        tokens que ya tenia —restaura 0.34.12 (marca izq / contacto der, ancho completo)
+        que la placa habia roto, y fuera sus etiquetas y doble filete—. El WhatsApp es el
+        Boton ambar del sistema (rol `boton`, negro sobre ambar 11.57:1, el mismo que ya
+        usan las tarjetas de la 05 sobre fondo oscuro); la direccion va en `pie`
+        tinte-indice con su tile, como iba, y desde R05.33 es ENLACE al negocio en Google
+        Maps; desde R05.35 su hover (y el de las redes) es la TARJETA AMBAR del menu activo
+        —fondo ambar, texto negro—, no subrayado: el subrayado en hipervinculo se descarto
+        en R04.13 y estos links no son la excepcion. El `px-2 py-1` va siempre puesto para
+        que la tarjeta no mueva el layout al entrar. El NAP sigue publicado una sola vez
+        (`data-nap`) y el boton conserva `data-cta="wa-pie"` (R05.30). El filete superior
+        tinte-3 enmarca el cierre sobre el negro de la 05; el `mt-12` no vuelve: el blanco
+        que se colaba entre contacto y pie no era aire, era un corte. */}
+    <footer class="border-t border-tinte-3 bg-negro text-blanco">
+      {/* El `pb-[76px]` movil NO es ritmo: es la reserva para la barra fija de WhatsApp
+          (~60 px + aire), la misma categoria que los 8.5 rem que la hero reserva con su
+          `min-h-[calc(...)]`. Por eso va en valor arbitrario y documentado, no en la
+          escala `pb-*` que la regla 14 topa en 40 px. */}
+      <div class="flex w-full flex-col gap-5 px-4 pb-[76px] pt-8 md:flex-row md:items-center md:justify-between md:px-8 md:py-8">
+        <a href="/" class="flex items-center gap-3" aria-label="SIEMDES — inicio">
+          <img src="/marca/logo-claro-112.png" width="99" height="112" alt="" aria-hidden="true" class="h-10 w-auto" />
+          <span>
+            <span class="block text-etiqueta-bloque">{SITIO.nombre}</span>
+            <span class="block text-pie text-tinte-indice">{SITIO.razonSocial}</span>
+          </span>
+        </a>
+        <div class="flex flex-col gap-3 md:items-end">
+          <Boton href={waHref} cta="wa-pie" variante="ambar">
+            <span class="inline-flex items-center gap-2">
+              <IconoLucide nombre="message-circle" ancho={18} alto={18} />
+              WhatsApp {SITIO.whatsapp.numeroLocal}
+            </span>
+          </Boton>
+          <a
+            href={SITIO.mapas.negocio}
+            target="_blank"
+            rel="noopener"
+            class="flex items-center gap-3 px-2 py-1 text-pie text-tinte-indice transition-colors hover:bg-ambar hover:text-negro"
+            data-nap="direccion"
+          >
+            <span class="inline-flex rounded-lg bg-ambar p-2.5 text-negro" aria-hidden="true">
+              <IconoLucide nombre="map-pin" />
+            </span>
+            {calle}, {cp} {municipio}, {estado}
+          </a>
+          {/* R05.34 (orden del operador 2026-10-05): sus redes tambien van en el pie, misma
+              fila quieta que en la 05 y mismo `at-sign` (sin iconos de marca en Lucide).
+              Los destinos coinciden con docs/11 items 1-2. */}
+          <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-pie">
+            <a
+              href={SITIO.sociales.facebook}
+              target="_blank"
+              rel="noopener"
+              data-cta="social-pie-facebook"
+              class="inline-flex items-center gap-2 px-2 py-3 text-tinte-indice transition-colors hover:bg-ambar hover:text-negro"
+            >
+              <IconoLucide nombre="at-sign" ancho={18} alto={18} />
+              Facebook {SITIO.sociales.handle}
+            </a>
+            <a
+              href={SITIO.sociales.instagram}
+              target="_blank"
+              rel="noopener"
+              data-cta="social-pie-instagram"
+              class="inline-flex items-center gap-2 px-2 py-3 text-tinte-indice transition-colors hover:bg-ambar hover:text-negro"
+            >
+              <IconoLucide nombre="at-sign" ancho={18} alto={18} />
+              Instagram {SITIO.sociales.handle}
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <a
+      href={waHref}
+      data-cta="wa-flotante"
+      class="fixed inset-x-0 bottom-0 z-30 flex items-center justify-center gap-2 bg-ambar px-4 py-4 text-boton text-negro md:hidden"
+      >Escribir por WhatsApp</a
+    >
+
+    {/* Viajeros (R05.19, orden del operador): un solo CTA que acompaña al dar scroll
+        (desktop; en móvil ya viaja la barra de arriba) + botón para subir. Los muestra
+        `viajeros.ts`; sin JS no existen. Viven en una sola columna fija (R05.23): mismo
+        ancho, mismo filo derecho y separación corta y pareja en todo el ancho — nada de
+        posiciones sueltas por botón. En móvil la columna sube para no pisar la barra
+        de WhatsApp; el CTA de la columna va ahí en `hidden` (ya viaja la barra). */}
+    <div class="fixed bottom-[5.5rem] right-4 z-40 flex flex-col items-end gap-2 md:bottom-6 md:right-6">
+      <a
+        id="viajero-cta"
+        href={waHref}
+        data-cta="wa-viajero"
+        aria-label="Solicitar diagnóstico por WhatsApp"
+        class="viajero hidden items-center justify-center border-2 border-ambar bg-ambar p-3 text-negro md:inline-flex"
+        ><span class="inline-flex" aria-hidden="true">
+          <IconoLucide nombre="message-circle" ancho={20} alto={20} />
+        </span></a
+      >
+      <button
+        id="viajero-subir"
+        type="button"
+        aria-label="Volver arriba"
+        class="viajero inline-flex items-center justify-center border-2 border-ambar bg-negro p-3 text-ambar"
+      >
+      <span class="inline-flex" aria-hidden="true">
+          <IconoLucide nombre="arrow-up" ancho={20} alto={20} />
+        </span>
+      </button>
+    </div>
+
+    <!-- Medicion por delegacion: un solo script para todos los data-cta del sitio. -->
+    <script>
+      import '../scripts/medicion.ts';
+    </script>
+    <!-- Scroll-spy del header (R05.7): marca el anchor de la seccion visible. -->
+    <script>
+      import '../scripts/seccion-activa.ts';
+    </script>
+    <!-- Revelado por scroll (R05.19): los contenidos aparecen al entrar en pantalla. -->
+    <script>
+      import '../scripts/revelado.ts';
+    </script>
+    <!-- Viajeros (R05.19): CTA que acompaña + botón subir. -->
+    <script>
+      import '../scripts/viajeros.ts';
+    </script>
+  </body>
+</html>

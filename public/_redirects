@@ -1,0 +1,10 @@
+# Redirecciones (R04.14, D-A 2026-10-05: la pagina /maquinaria/ se retira y su
+# contenido vive ensanchado en Inicio #maquinaria). Formato valido en Netlify y
+# en Cloudflare Pages. Regla exacta a la pagina: NO toca /maquinaria/*.jpg
+# (las fotos locales de la galeria viven ahi).
+/maquinaria/ /#maquinaria 301
+/marcas/ /#maquinaria 301
+/servicios/ /#servicios 301
+/cobertura/ /#cobertura 301
+/experiencia/ /#experiencia 301
+/contacto/ /#contacto 301

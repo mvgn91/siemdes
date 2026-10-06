@@ -1,0 +1,26 @@
+---
+// Boton del sistema — S1-D-03.4
+// Las clases vienen de src/estilos/boton.ts, la misma fuente que usa la isla React.
+import { clasesBoton, type VarianteBoton } from '../estilos/boton';
+
+interface Props {
+  href: string;
+  variante?: VarianteBoton;
+  /** Marca el clic para la medicion (S1-D-06.3): data-cta="wa-<lugar>" */
+  cta?: string;
+  externo?: boolean;
+  class?: string;
+}
+
+const { href, variante = 'ambar', cta, externo = false, class: clases } = Astro.props;
+---
+
+<a
+  href={href}
+  data-cta={cta}
+  target={externo ? '_blank' : undefined}
+  rel={externo ? 'noopener' : undefined}
+  class={clasesBoton(variante, clases)}
+>
+  <slot />
+</a>

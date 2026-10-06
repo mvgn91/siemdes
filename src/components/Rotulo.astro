@@ -1,0 +1,50 @@
+---
+// Rotulo de seccion — S1-D-03.4, rehecho en S1-D-04.8
+// Los numerales grandes en Barlow Black son el recurso de jerarquia del sistema
+// (docs/14 §4.3). No se inventa un cuarto rol tipografico ni se usan iconos.
+//
+// HALLAZGO QUE MOTIVO EL CAMBIO (medido, no supuesto): el numeral iba en
+// `--color-numeral` (#EEEEF0) sobre blanco, y esa pareja da 1.16:1 de contraste. O sea el
+// recurso de jerarquia del sistema —el unico que la tarjeta usa como firma— estaba
+// pintado con un tinte 3.7% mas claro que el fondo. La regla 12 de la justicia lo reportaba
+// como "decoracion por debajo de 4.5:1" en 23 elementos: el sitio publicaba jerarquia
+// invisible y la guardia lo Comptaba como correcto. La jerarquia del sistema no puede
+// depender de que alguien la note.
+//
+// DECISION: sobre fondo claro el numeral va en NEGRO de marca.
+// `--color-numeral` se reserva para su uso real: la marca de agua sobre NEGRO,
+// que es donde el kit la define y donde sí se ve.
+// R03.2 (Reforma 03, D-R03-1): sin filete superior. El estándar S01 marca la
+// sección con numeral + titular, no con bordes. La excepción rótulo de la
+// regla 16 (h2 etiqueta + numeral indice) queda intacta.
+// JERARQUIA SEMANTICA (auditoria del operador, 2026-09-30). El rotulo es el elemento que
+// MARCA cada seccion: numeral grande + etiqueta. Pero se renderizaba como `<span>`, asi que
+// no existia en el arbol de encabezados, y el `<h2>` del sitio habia acabado en las
+// tarjetas de dentro. Medido: 65 `<h2>` en 7 paginas haciendo CUATRO trabajos distintos
+// (titulo de seccion 28 px, subtitulo 21, parrafo 18 y rotulo 14). El esquema quedaba plano
+// donde el diseno tiene niveles.
+//
+// `titulo` marca el rotulo que ES el titulo de su seccion: se renderiza como <h2>. Los que
+// son eyebrow de una pagina o de otra seccion (van encima del <h1> o del <h2>) se quedan en
+// <span>, que es lo que son. El aspecto NO cambia: el rol `etiqueta` impone tamano, peso,
+// familia y mayusculas, y una utilidad gana a la regla de elemento del `h2`.
+interface Props {
+  texto: string;
+  numeral?: string;
+  /** El rotulo es el titulo de la seccion, no su eyebrow. */
+  titulo?: boolean;
+}
+const { texto, numeral, titulo = false } = Astro.props;
+const Etiqueta = titulo ? 'h2' : 'span';
+---
+
+<div class="flex items-center gap-4">
+  {
+    numeral && (
+      <span class="text-indice" aria-hidden="true">
+        {numeral}
+      </span>
+    )
+  }
+  <Etiqueta class="text-etiqueta text-tinte-2">{texto}</Etiqueta>
+</div>

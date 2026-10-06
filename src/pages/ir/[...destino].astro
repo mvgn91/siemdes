@@ -1,0 +1,74 @@
+---
+// Pagina de redireccion — S1-D-05.2 (parcial: la estructura, sin QR todavia)
+//
+// El QR de una pieza impresa NO puede apuntar a un `wa.me` fijo: si el numero cambia, todo
+// lo impreso muere. Apunta a `/ir/<destino>` y aqui se resuelve el destino real. Cambiar un
+// destino es editar `src/data/ir.json` y redesplegar; el QR impreso sigue sirviendo.
+//
+// ESTADO: B-02 sigue abierto (sin dominio no hay URL estable que imprimir en un QR). Esta
+// pagina existe y resuelve, pero el guion de emision de QR (`scripts/emitir-qr.mjs`, aun por
+// escribir) debe NEGARSE a emitir mientras `SITIO.publicado` sea false. Esa negativa es
+// parte del diseno, no un pendiente olvidado: un QR emitido contra `siemdes.mx` sin que el
+// dominio exista es basura impresa.
+import Base from '../../layouts/Base.astro';
+import contacto from '../../data/contacto.json';
+import ir from '../../data/ir.json';
+import { NAVEGACION, SITIO } from '../../data/navegacion';
+
+export function getStaticPaths() {
+  return ir.destinos.map((destino) => ({ params: { destino: destino.id } }));
+}
+
+const { destino } = Astro.params;
+const entrada = ir.destinos.find((d) => d.id === destino);
+
+// Destino desconocido: en salida estatica no puede pasar (getStaticPaths pre-renderiza los
+// 4), pero si el hosting algun dia es SSR, esto devuelve un 404 real en vez de un wa.me a
+// ciegas. `Astro.redirect` no admite 404, por eso es un Response directo.
+if (!entrada) {
+  return new Response('Destino no encontrado', { status: 404 });
+}
+
+// El href real se arma aqui, no en el QR: el QR solo guarda `/ir/<id>`.
+const solicitud = entrada.tipo === 'whatsapp' ? contacto.solicitudes.find((s) => s.id === entrada.solicitud) : undefined;
+const href =
+  entrada.tipo === 'whatsapp'
+    ? `https://wa.me/${SITIO.whatsapp.numero}?text=${encodeURIComponent(solicitud?.mensaje ?? contacto.solicitudes[0].mensaje)}`
+    : entrada.tipo === 'ruta' && 'ruta' in entrada
+      ? (NAVEGACION.find((n) => n.ruta === entrada.ruta)?.ruta ?? '/')
+      : 'url' in entrada && typeof entrada.url === 'string'
+        ? entrada.url
+        : '/';
+
+// Redireccion inmediata para el visitante real; la pagina visible es el respaldo para quien
+// llega sin redireccion automatica (y lo que indexaria un rastreador si se publica).
+// NOTA DE HONESTIDAD sobre el `if` de abajo: en salida estatica no hay servidor que evalue
+// `Astro.request.headers`, asi que la redireccion real la hacen el meta-refresh y el script
+// de abajo. El `Astro.redirect` queda para el dia en que el hosting sea SSR; mientras tanto
+// es codigo muerto documentado, no una promesa falsa.
+if (import.meta.env.SSR && Astro.request.headers.get('sec-fetch-mode') === 'navigate') {
+  return Astro.redirect(href, 302);
+}
+---
+
+<Base
+  titulo={`Ir a ${entrada.etiqueta} — ${SITIO.nombre}`}
+  descripcion={`Acceso directo a ${entrada.etiqueta} de ${SITIO.nombre}.`}
+  fueraDeIndice={true}
+>
+  {/* Redireccion sin servidor (el hosting es estatico): meta-refresh + script. El enlace
+      "Continuar" es el respaldo sin JS. El meta va al <head> por el slot `head` de Base:
+      en el <body> seria HTML invalido. */}
+  <meta http-equiv="refresh" content={`0;url=${href}`} slot="head" />
+  <script define:vars={{ href }}>
+    window.location.replace(href);
+  </script>
+  <section class="mx-auto max-w-2xl px-4 py-10 text-center">
+    <p class="text-etiqueta text-tinte-3">Acceso directo</p>
+    <h1 class="mt-3 text-titular-1">{entrada.etiqueta}</h1>
+    <p class="mx-auto mt-3 max-w-md text-tinte-2">{entrada.texto}</p>
+    <a href={href} class="mt-6 inline-block bg-ambar px-6 py-3 text-boton text-negro hover:bg-negro hover:text-ambar">
+      Continuar
+    </a>
+  </section>
+</Base>

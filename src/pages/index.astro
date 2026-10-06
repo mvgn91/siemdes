@@ -1,0 +1,540 @@
+---
+// Inicio — R05 landing unica (docs/34): hero + cifras + servicios + maquinaria +
+// contacto. La 03 (Evidencia) salio en R05.5; cobertura/experiencia entran en R05.9-10.
+// Sin foto real (V-011) los espacios son SlotFoto con spec, no stock ni IA.
+// Contenido retirado de Inicio (destino documentado, docs/28 §1.5/§10): propuesta
+// "Como se trabaja aqui" -> Servicios (proceso) y Experiencia; aside de plazos ->
+// Servicios (fronteras). Nada se perdio, se mudo a su ubicacion principal (Reforma §8).
+import Base from '../layouts/Base.astro';
+import Boton from '../components/Boton.astro';
+import CintilloMarcas from '../components/CintilloMarcas.astro';
+import IconoLucide, { type NombreIcono } from '../components/IconoLucide.astro';
+// R05.30: la isla React "Armar el mensaje" salio de la 05 y con ella el import de
+// CtaWhatsApp.tsx (componente borrado). Se queda la integracion de React en astro.config
+// porque no es de este bloque: quitarla es otra decision, y dejarla no cuesta nada.
+import { SITIO } from '../data/navegacion';
+import inicio from '../data/inicio.json';
+import servicios from '../data/servicios.json';
+import cobertura from '../data/cobertura.json';
+import experiencia from '../data/experiencia.json';
+import contacto from '../data/contacto.json';
+// R04.14 (D-A): el catalogo de Maquinaria vive ensanchado en Inicio; R04.18 (2026-10-05)
+// fija UN solo eje: la clasificacion del cliente (docs/05 C21). Las marcas salen del grupo
+// homonimo de marcas.json y los tipos del grupo homonimo de maquinaria.json, ambos por
+// `id` (nunca por indice): sin recortes, sin repeticiones y sin indices magicos.
+import maquinaria from '../data/maquinaria.json';
+import marcas from '../data/marcas.json';
+
+const mensaje = 'Hola, quiero solicitar un diagnóstico para mi equipo.';
+const waHref = `https://wa.me/${SITIO.whatsapp.numero}?text=${encodeURIComponent(mensaje)}`;
+
+// Tiles por sección (docs/31 §4, mismo orden del JSON de cada una).
+// Servicios: 6 líneas + taller. Experiencia: 4 capacidades. Contacto: 2 canales.
+const tilesServicios: NombreIcono[] = ['scan-line', 'cog', 'gauge', 'cpu', 'wrench', 'forklift', 'factory'];
+const tilesExperiencia: NombreIcono[] = ['cog', 'gauge', 'cpu'];
+const tilesContacto: NombreIcono[] = ['message-circle', 'star'];
+const enlacesContacto: Record<string, string> = {
+  whatsapp: `https://wa.me/${SITIO.whatsapp.numero}?text=${encodeURIComponent(mensaje)}`,
+  resenas: SITIO.resenas.url,
+};
+
+// Eje 02 (docs/05 C21): 5 categorias. Cada una toma sus TIPOS de maquinaria.json por `id`;
+// la foto (si existe) se ancla por `id` en inicio.json. Las categorias sin foto (Plataformas
+// y Motores) se pintan con el mismo patron y un icono. Las MARCAS no se reparten por
+// categoria (orden del operador: "que no nos encasillen"): van todas juntas, aparte.
+const imagenDe = (id: string) => inicio.maquinariaGaleria.imagenes.find((i) => i.id === id);
+const iconoPanel = (id: string): 'arrow-up-down' | 'fuel' =>
+  id === 'plataformas' ? 'arrow-up-down' : 'fuel';
+const categorias = maquinaria.grupos.map((g) => ({
+  id: g.id,
+  nombre: g.nombre,
+  equipos: g.equipos,
+  imagen: imagenDe(g.id),
+}));
+// Las 22 marcas unicas, en una sola lista plana (sin agrupar por categoria).
+const marcasUnicas = [...new Set(marcas.grupos.flatMap((g) => g.marcas))];
+// Iconos de "Donde se trabaja": taller, en sitio, traslado.
+const iconoDonde = (indice: number): 'factory' | 'compass' | 'truck' =>
+  (['factory', 'compass', 'truck'] as const)[indice] ?? 'factory';
+---
+
+<Base
+  titulo={inicio.meta.titulo}
+  descripcion={inicio.meta.descripcion}
+  ogImagen="/og/inicio.png"
+  encabezado="oscuro"
+  splash
+>
+  {/* 2+3. PRIMERA PANTALLA — hero y cintillo juntos, sin scroll (orden del operador
+      2026-10-01). El contenedor mide `min-h-svh` y el hero es `flex-1`: el cintillo ocupa lo
+      suyo y el hero se queda con el resto, asi que los dos caben en el viewport sea cual sea
+      su alto. El hero: slide de fondo con assets PROPIOS (fundido cruzado en CSS, sin JS),
+      firma de marca en tipografia, titular y un solo CTA. Las imagenes son fondo decorativo
+      detras del texto, por eso van con alt="" + aria-hidden (la guardia exige alt en <img>;
+      un alt vacio SOLO es valido con aria-hidden). Overlay PLANO (los gradientes estan
+      rechazados, docs/30) solo por legibilidad. */}
+  {/* El alto descuenta lo que ya ocupa la pantalla: la cabecera fixed y, en movil, la barra
+      flotante de WhatsApp (~50 px). Sin ese descuento el cintillo quedaba cortado abajo
+      porque el contenedor empieza a contar desde 0 y no desde el header.
+
+      R05.29 (orden del operador 2026-10-05: "le faltan unos px a la hero, de altura, para
+      que quede perfecto los tres elementos en la primera imagen del sitio, que entre
+      header, hero y cintillo de marcas se vean completamente sin tener que hacer scroll,
+      ahora mismo le falta una franja color negro").
+
+      Lo que habia, MEDIDO sobre el render y no estimado: el bloque cabecera+hero+cintillo
+      terminaba en el ULTIMO pixel de la ventana. Holgura 0 px a 768, 800, 900, 1024 y 1080
+      de alto — en los cinco. Cero margen en los cinco. Con cero margen el borde inferior
+      del cintillo queda pegado al borde de la pantalla y no hay ni un pixel de la seccion
+      siguiente, que es `bg-negro`: de ahi las dos cosas que dijo, que faltaba una franja
+      negra y que los tres elementos no se ven "completos". Eran la misma causa.
+
+      Y habia un segundo defecto, tambien medido: `main` empujaba 68 px y la cabecera ocupa
+      72 (68 de contenido + 4 de su banda ambar `h-1`), de modo que la banda ambar se
+      comia los primeros 4 px de la caja del hero. El alto de la cabecera vivia en dos
+      sitios escritos a mano y divergieron.
+
+      Reparto actual, todo medido:
+        cabecera  72 px  (main `pt-[72px]`)
+        cintillo  106 px  (24 + 56 del logo + 2 de bordes, `lg:py-6`)
+        hero      el resto, y le sobran 16 px respecto a antes (los que bajo el cintillo)
+        bloque    100svh - 12 px, de modo que los tres elementos caben completos y abajo
+                  asoman 12 px de la franja negra de la seccion siguiente
+
+      El descuento no es "lo que ocupa la cabecera" sino "lo que ocupa la cabecera menos la
+      franja que se quiere ver": por eso 5.25 rem y no 4.5. En movil sigue en 8.5 rem porque
+      la barra de WhatsApp se monta encima del pliegue y ahi ya estaba medido y aprobado. */}
+  <div class="flex min-h-[calc(100svh-8.5rem)] flex-col md:min-h-[calc(100svh-5.25rem)]">
+    <section class="relative flex flex-1 items-center overflow-hidden bg-negro text-blanco">
+      <div class="hero-slide absolute inset-0" aria-hidden="true">
+        {
+          inicio.hero.imagenes.map((imagen, indice) => (
+            <img
+              src={imagen.src}
+              alt=""
+              aria-hidden="true"
+              width="1920"
+              height="1080"
+              fetchpriority={indice === 0 ? 'high' : 'low'}
+              loading={indice === 0 ? 'eager' : 'lazy'}
+              class="absolute inset-0 h-full w-full object-cover"
+            />
+          ))
+        }
+      </div>
+      <div class="absolute inset-0 bg-negro opacity-60" aria-hidden="true"></div>
+      <div class="relative mx-auto w-full max-w-6xl px-4 py-10">
+        {/* Wordmark tipografico (orden del operador 2026-10-01): "SIEMDES" como titulo grande
+            en blanco, rol `wordmark` (Barlow 900, 38 px). No se usa `titular-2` porque la
+            guardia lo reserva para los <h2> y esto no es un encabezado. La razon social salio
+            del hero por orden del operador ("ya veremos donde aplicarlo"): sigue viva en el
+            pie, que la imprime literal (L6, docs/14 §1.1). */}
+        <p class="text-wordmark text-blanco">{SITIO.nombre}</p>
+        <h1 class="mt-6 max-w-3xl text-titular-1 text-blanco">
+          {inicio.hero.titular}
+          <span class="block text-ambar">{inicio.hero.titularAcento}</span>
+        </h1>
+        <div class="mt-12">
+          <Boton href={waHref} cta="wa-hero" variante="ambar">{inicio.hero.ctaPrimario}</Boton>
+        </div>
+      </div>
+    </section>
+
+    {/* Cintillo: solo la franja con las 22 marcas en loop (orden del operador 2026-10-01):
+        sin presentación de sección, sin nota, sin CTA. El detalle por marca vive en
+        Inicio #maquinaria (banda 02b, D-E). */}
+    <CintilloMarcas />
+  </div>
+
+  {/* 4. EXPERIENCIA Y CIFRAS — primera seccion bajo el cintillo (R04.10, revision
+      Armand 1 O6). Overhaul 2026-10-05 (operador: "algo mas dinamico, con movimiento"):
+      la banda ENTRA con revelado escalonado y las cifras CUENTAN de 0 a su valor al
+      entrar en pantalla. El HTML publica el numero REAL (SEO, guardia regla 11 y el
+      caso sin-JS lo ven); el script solo lo anima. Solo transform+opacity (D-D); con
+      `prefers-reduced-motion` la cifra queda quieta y visible desde el primer frame.
+      Cifras exactas 16/22/8/6 (Reforma §6). Etiquetas en mayuscula compacta Inter
+      (rol `cifra-etiqueta`, O6). */}
+  <section class="bg-negro text-blanco">
+    <div class="mx-auto max-w-6xl px-4 py-10">
+      <h2 class="text-titular-2 text-blanco titulo-resaltado">{inicio.experienciaResumen.titulo}</h2>
+      {/* Tarjetas de cifra (orden del operador 2026-10-05): sin separadores, cada metrica
+          en su TARJETA con relleno tinte-2 y borde tinte-3 (el "glass" real esta bloqueado:
+          el desenfoque lo veta la regla 5b y la translucidez obliga a un hex fuera de la
+          paleta, regla 1). Hover: la tarjeta vira a AMBAR con el texto en negro y sube 4 px
+          (`.eleva`). El `.group` va en el contenedor y la tarjeta es su descendiente: el
+          hover cubre la celda entera, y la guardia resuelve el par ambar/negro del mismo
+          estado `group-hover` (regla 12). */}
+      <div class="mt-8 grid gap-4 sm:grid-cols-3" data-cifras>
+        {
+          inicio.cifras.map((cifra, indice) => (
+            <div class="group" style={`--retraso:${indice * 90}ms`}>
+              <div class="cifra eleva acrilico-oscuro rounded-xl border px-5 py-8 text-blanco group-hover:border-ambar group-hover:bg-ambar group-hover:text-negro">
+                <p class="text-cifra text-ambar group-hover:text-negro" data-cifra={cifra.valor}>
+                  {cifra.valor}
+                </p>
+                <p class="mt-2 text-cifra-etiqueta text-blanco group-hover:text-negro">
+                  {cifra.etiqueta}
+                </p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {/* 01. SERVICIOS COMPLETO — R05.8 (Revisión 2 R1/R5): el resumen de 4 tarjetas se
+      absorbe en el catálogo completo (6 líneas + taller, sin repetir conceptos).
+      El h2 es la introducción del catálogo; las tarjetas bajan a h3 (regla 16).
+      Mismo patrón de card que la 02. Cierre propio con CTA, como cada sección. */}
+  <section class="scroll-mt-24 border-t border-filete bg-numeral text-negro" id="servicios">
+    <div class="mx-auto max-w-6xl px-4 py-10">
+      <div class="flex items-center gap-4" data-revela>
+        <span class="text-indice" aria-hidden="true">01</span>
+        <h2 class="text-titular-2 text-negro titulo-resaltado">{servicios.introduccion.titulo}</h2>
+      </div>
+      {/* R05.38 (orden del operador 2026-10-05): la entradilla sale del sitio sin reemplazo;
+          el encabezado pasa directo al catalogo, como la 04 en R05.27. */}
+      <div class="mt-8 grid gap-6 md:grid-cols-2" data-revela>
+        {
+          servicios.principales.map((linea, indice) => (
+            <article class="eleva acrilico flex flex-col rounded-xl border p-6 text-negro">
+              <span class="inline-flex self-start rounded-lg bg-ambar p-2.5 text-negro" aria-hidden="true">
+                <IconoLucide nombre={tilesServicios[indice] ?? 'wrench'} />
+              </span>
+              <h3 class="mt-4 text-titular-3 text-negro">{linea.titulo}</h3>
+              <p class="mt-2 text-cuerpo text-tinte-2">{linea.texto}</p>
+              <ul class="mt-3 space-y-2">
+                {linea.incluye.map((punto) => (
+                  <li class="flex gap-3 text-cuerpo text-tinte-2">
+                    <span class="mt-2 h-2 w-2 shrink-0 bg-ambar" aria-hidden="true" />
+                    {punto}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+        <article class="eleva acrilico flex flex-col rounded-xl border p-6 text-negro">
+          <span class="inline-flex self-start rounded-lg bg-ambar p-2.5 text-negro" aria-hidden="true">
+            <IconoLucide nombre="factory" />
+          </span>
+          <h3 class="mt-4 text-titular-3 text-negro">{servicios.secundarios.titulo}</h3>
+          <p class="mt-2 text-cuerpo text-tinte-2">{servicios.secundarios.texto}</p>
+          <ul class="mt-3 space-y-2">
+            {
+              servicios.secundarios.trabajos.map((trabajo) => (
+                <li class="flex gap-3 text-cuerpo text-tinte-2">
+                  <span class="mt-2 h-2 w-2 shrink-0 bg-ambar" aria-hidden="true" />
+                  {trabajo}
+                </li>
+              ))
+            }
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  {/* 6. MAQUINARIA QUE ATENDEMOS — R04.18 (2026-10-05): overhaul completo, pedido del
+      operador. UN solo eje (docs/05 C21): 5 categorias, cada una con sus tipos y sus
+      marcas, en una rejilla uniforme (una sola plantilla, un solo `.map()`, sin indices
+      magicos). Reemplaza las 4 fotos sueltas + 6 filas cosidas a mano que perdian datos
+      ("John Deere" sola en Agricola, "Plataformas y elevadores" como equipo de gruas) y
+      repetian "Maquinaria pesada" en tres filas. Las fotos se anclan por categoria; las
+      categorias sin foto (Plataformas, Motores) se pintan con el mismo patron y un icono.
+      La tarjeta de diagnostico pasa a NEGRA con textos en ambar (orden del operador) y sin
+      la cuenta de marcas; fuera la tarjeta "Donde mas experiencia hay". */}
+  <section class="scroll-mt-24 border-t border-filete bg-blanco" id="maquinaria">
+    <div class="mx-auto max-w-6xl px-4 py-10">
+      <div class="flex items-center gap-4" data-revela>
+        <span class="text-indice" aria-hidden="true">02</span>
+        <h2 class="text-titular-2 text-negro titulo-resaltado">{inicio.maquinariaGaleria.titulo}</h2>
+      </div>
+      {/* R05.39 (orden del operador 2026-10-05: fuera TODAS las entradillas): el encabezado
+          pasa directo a la galeria. */}
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-revela>
+        {
+          categorias.map((categoria) => (
+            <article class="eleva acrilico flex flex-col rounded-xl border p-6 text-negro">
+              {categoria.imagen ? (
+                <figure class="relative overflow-hidden rounded-lg bg-negro text-tinte-indice" style="aspect-ratio:4 / 3">
+                  {/* Foto: {categoria.imagen.imagen.credito}. Licencia y autor en el JSON +
+                      aqui; sin badge visible por orden del operador (D-B). */}
+                  <img
+                    src={categoria.imagen.imagen.src}
+                    alt={categoria.imagen.imagen.alt}
+                    width={categoria.imagen.imagen.ancho}
+                    height={categoria.imagen.imagen.alto}
+                    loading="lazy"
+                    decoding="async"
+                    class="absolute inset-0 h-full w-full object-cover"
+                  />
+                </figure>
+              ) : (
+                <div
+                  class="flex items-center justify-center rounded-lg bg-negro text-tinte-indice"
+                  style="aspect-ratio:4 / 3"
+                  aria-hidden="true"
+                >
+                  <span class="text-ambar">
+                    <IconoLucide nombre={iconoPanel(categoria.id)} ancho={40} alto={40} />
+                  </span>
+                </div>
+              )}
+              <h3 class="mt-5 text-titular-3 text-negro">
+                {categoria.nombre}
+              </h3>
+              <ul class="mt-4 flex flex-wrap gap-2">
+                {categoria.equipos.map((equipo) => (
+                  <li class="rounded-full border border-filete px-3 py-1 text-chip text-tinte-2">{equipo}</li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+
+      {/* MARCAS — un solo lugar, referencia rapida (orden del operador 2026-10-05: que no
+          nos encasillen). Las marcas NO se reparten por categoria: lista plana de las 22
+          unicas. El cintillo de arriba ya las muestra en loop. */}
+      <div class="acrilico mt-10 rounded-xl border p-6 text-negro md:p-8" data-revela>
+        <h3 class="text-titular-3 text-negro">{marcas.introduccion.titulo}</h3>
+        <ul class="mt-5 flex flex-wrap gap-2">
+          {
+            marcasUnicas.map((marca) => (
+              <li class="rounded-full border border-filete px-3 py-1 text-chip text-negro">{marca}</li>
+            ))
+          }
+        </ul>
+      </div>
+
+      {/* DIAGNOSTICO COMPUTARIZADO — tarjeta NEGRA con textos en ambar (orden del operador
+          2026-10-05): destaca. Sin lista de marcas y sin cuenta ("8 marcas"): solo el
+          servicio. Copy sobrio: se dice lo que se hace, sin presuncion. */}
+      <div class="acrilico mt-10 rounded-xl border p-6 text-negro md:p-8" data-revela>
+        <div class="flex items-start gap-4">
+          <span class="inline-flex shrink-0 rounded-lg bg-ambar p-3 text-negro" aria-hidden="true">
+            <IconoLucide nombre="cpu" ancho={28} alto={28} />
+          </span>
+          <div>
+            <p class="text-titular-3 text-negro">{marcas.diagnosticoComputarizado.titulo}</p>
+            <p class="mt-2 max-w-2xl text-lead text-tinte-2">{marcas.diagnosticoComputarizado.texto}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* DONDE SE TRABAJA — 3 modalidades en tarjetas con icono (rediseno 2026-10-05). */}
+      <h3 class="mt-10 text-titular-3 text-negro" data-revela>{maquinaria.donde.titulo}</h3>
+      <div class="mt-4 grid gap-6 md:grid-cols-3" data-revela>
+        {
+          maquinaria.donde.modalidades.map((modalidad, indice) => (
+            <div class="acrilico rounded-xl border p-6 text-negro">
+              <span class="inline-flex rounded-lg bg-ambar p-2.5 text-negro" aria-hidden="true">
+                <IconoLucide nombre={iconoDonde(indice)} />
+              </span>
+              <p class="mt-4 text-etiqueta-bloque text-negro">{modalidad.titulo}</p>
+              <p class="mt-2 text-cuerpo text-tinte-2">{modalidad.texto}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {/* 7. EVIDENCIA — ELIMINADA R05.5 (D-C desaparición total, Revisión 2 R3):
+      "La confianza se construye con trabajo" sale del render, del JSON y del
+      esquema. Se repondrá solo con reseñas reales de Google (V-011). */}
+
+  {/* 03. COBERTURA + MAPA — R05.17 (orden del operador 2026-10-05): mapa Google de
+      Arandas con el negocio ubicado (link verificado: mismo place ID del perfil).
+      Marco negro con acento ámbar; municipios al lado con CTA al mapa. La base vive
+      una sola vez en 05 Contacto: aquí solo se muestra dónde. */}
+  <section class="scroll-mt-24 border-t border-filete bg-blanco text-negro" id="cobertura">
+    <div class="mx-auto max-w-6xl px-4 py-10">
+      <div class="flex items-center gap-4" data-revela>
+        <span class="text-indice" aria-hidden="true">03</span>
+        <h2 class="text-titular-2 text-negro titulo-resaltado">{cobertura.introduccion.titulo}</h2>
+      </div>
+      {/* R05.39 (orden del operador 2026-10-05: fuera TODAS las entradillas): el encabezado
+          pasa directo al mapa y los municipios. */}
+      <div class="mt-8 grid gap-6 md:grid-cols-2" data-revela>
+        <figure class="flex flex-col" data-revela>
+          <div class="acrilico overflow-hidden rounded-xl border p-2">
+            <iframe
+              src={SITIO.mapas.embed}
+              title="Mapa: base SIEMDES en Arandas, Jalisco"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen
+              class="h-auto w-full border-0"
+              style="aspect-ratio: 4 / 3"
+            ></iframe>
+          </div>
+        </figure>
+        <div>
+          <h3 class="text-titular-3 text-tinte-3">Municipios</h3>
+          <ul class="mt-4 divide-y divide-filete border-y border-filete">
+            {
+              cobertura.municipios.map((municipio) => (
+                <li class="flex items-baseline justify-between py-3">
+                  <span class:list={['text-titular-3', municipio.esBase ? 'text-negro' : 'text-tinte-2']}>
+                    {municipio.nombre}
+                  </span>
+                  {municipio.esBase && (
+                    <span class="bg-ambar px-2 py-1 text-etiqueta">Base</span>
+                  )}
+                </li>
+              ))
+            }
+          </ul>
+          <div class="mt-6">
+            <Boton href={SITIO.mapas.negocio} cta="mapas-cobertura" variante="ambar" externo>
+              {cobertura.mapa.cta}
+            </Boton>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* 04. EXPERIENCIA — R05.10 (Revisión 2 R1/R5): capacidades + por qué llegan.
+      Los casos reservados NO se publican como slots (V-011): solo la nota de reserva,
+      que ya era pública en la página anterior. Las tarjetas bajan a h3 (regla 16). */}
+  <section class="scroll-mt-24 border-t border-filete bg-numeral text-negro" id="experiencia">
+    <div class="mx-auto max-w-6xl px-4 py-10">
+      <div class="flex items-center gap-4" data-revela>
+        <span class="text-indice" aria-hidden="true">04</span>
+        <h2 class="text-titular-2 text-negro titulo-resaltado">{experiencia.introduccion.titulo}</h2>
+      </div>
+      {/* R05.27 (orden del operador 2026-10-05): la entradilla de la seccion
+          ("Oficio de mina y taller para diagnostico y reparacion") se elimino del sitio.
+          No se sustituyo por otro parrafo: el encabezado pasa directo a las tarjetas. */}
+      <div class="mt-8 grid gap-6 sm:grid-cols-2" data-revela>
+        {
+          experiencia.capacidades.map((capacidad, indice) => (
+            <article class="eleva acrilico flex flex-col rounded-xl border p-6 text-negro">
+              <span class="inline-flex self-start rounded-lg bg-ambar p-2.5 text-negro" aria-hidden="true">
+                <IconoLucide nombre={tilesExperiencia[indice] ?? 'wrench'} />
+              </span>
+              <h3 class="mt-4 text-titular-3 text-negro">{capacidad.titulo}</h3>
+              <p class="mt-2 text-cuerpo text-tinte-2">{capacidad.texto}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {/* 05. CONTACTO — R05.11 (Revisión 2 R1/R5): la página se absorbe en la landing.
+      Las filas O7 (WhatsApp + domicilio) salen: su contenido vive una sola vez en
+      los canales. El enlace "Ir a Contacto" sale con la página (D-D).
+      R05.30 (orden del operador 2026-10-05): de esta banda salen DOS bloques mas.
+      (1) La isla "Armar el mensaje" (CtaWhatsApp): se borra el render, sus textos en
+      contacto.json y el componente entero. Las 3 solicitudes (diagnostico, visita,
+      cotizacion) NO se tocan: las usan las redirecciones /ir/*, que siguen vivas.
+      (2) La tarjeta "Base de operaciones": el domicilio ya no se repite en el cuerpo
+      de la pagina; vive una sola vez, en el pie (SITIO.direccion, data-nap) y en el
+      JSON-LD de Base.astro. El mapa de la 03 lo muestra tambien. */}
+  <section class="scroll-mt-24 border-t border-tinte-3 bg-negro text-blanco" id="contacto">
+    <div class="mx-auto max-w-6xl px-4 py-10">
+      <div class="flex items-center gap-4" data-revela>
+        <span class="text-indice text-ambar" aria-hidden="true">05</span>
+        <h2 class="text-titular-2 text-blanco titulo-resaltado">Contacto directo</h2>
+      </div>
+      {/* R05.39 (orden del operador 2026-10-05: fuera TODAS las entradillas, incluida la de
+          la 05: solo numero y nombre de seccion). */}
+      <div class="mt-8 grid gap-6 md:grid-cols-2" data-revela>
+        {
+          contacto.canales.map((canal, indice) => (
+            <article class:list={['acrilico-oscuro rounded-xl border p-6 text-blanco md:p-8']}>
+              <span class="inline-flex rounded-lg bg-ambar p-2.5 text-negro" aria-hidden="true">
+                <IconoLucide nombre={tilesContacto[indice] ?? 'message-circle'} />
+              </span>
+              <p class:list={['mt-4 text-etiqueta-bloque', 'text-ambar']}>
+                {canal.nombre}
+              </p>
+              <p class:list={['mt-2 text-cuerpo', 'text-blanco']}>{canal.texto}</p>
+              <div class="mt-5">
+                <Boton
+                  href={enlacesContacto[canal.id]}
+                  cta={`wa-contacto-${canal.id}`}
+                  variante="ambar"
+                  externo={canal.id === 'resenas'}
+                >
+                  {canal.cta}
+                </Boton>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+      {/* R05.34 (orden del operador 2026-10-05): sus redes van aqui y en el pie, como fila
+          quieta — las 2 tarjetas quedan intactas. Sin iconos de marca en Lucide 1.49.0
+          (no existen en node_modules, verificado): `at-sign` + handle visible; el destino
+          lo da el href, no el dibujo. `medicion.ts` ya mide cualquier `data-cta`
+          (canal "otro"): sin cambio en el script. */}
+      <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3" data-revela>
+        <p class="text-etiqueta text-tinte-indice">También en redes</p>
+        <a
+          href={SITIO.sociales.facebook}
+          target="_blank"
+          rel="noopener"
+          data-cta="social-contacto-facebook"
+          class="inline-flex items-center gap-2 px-2 py-3 text-pie text-blanco transition-colors hover:bg-ambar hover:text-negro"
+        >
+          <IconoLucide nombre="at-sign" ancho={18} alto={18} />
+          Facebook {SITIO.sociales.handle}
+        </a>
+        <a
+          href={SITIO.sociales.instagram}
+          target="_blank"
+          rel="noopener"
+          data-cta="social-contacto-instagram"
+          class="inline-flex items-center gap-2 px-2 py-3 text-pie text-blanco transition-colors hover:bg-ambar hover:text-negro"
+        >
+          <IconoLucide nombre="at-sign" ancho={18} alto={18} />
+          Instagram {SITIO.sociales.handle}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* Conteo de las cifras de Experiencia (overhaul 2026-10-05): el HTML publica el numero
+      real; aqui se lleva de 0 al valor cuando la banda entra en pantalla, en el mismo
+      instante en que se revela. No corre con prefers-reduced-motion: la cifra queda
+      visible tal cual. Sin JS, la cifra tambien queda visible. */}
+  <script>
+    const reducir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const bandas = document.querySelectorAll('[data-cifras]');
+    if (!reducir && bandas.length > 0) {
+      const nodosDe = (banda: Element) => Array.from(banda.querySelectorAll<HTMLElement>('[data-cifra]'));
+      for (const banda of bandas) for (const nodo of nodosDe(banda)) nodo.textContent = '0';
+      const observa = new IntersectionObserver(
+        (entradas) => {
+          for (const entrada of entradas) {
+            if (!entrada.isIntersecting) continue;
+            const banda = entrada.target;
+            observa.unobserve(banda);
+            banda.classList.add('cifras-visible');
+            for (const nodo of nodosDe(banda)) {
+              const fin = Number(nodo.dataset.cifra);
+              if (!Number.isFinite(fin)) continue;
+              const arranque = performance.now();
+              const paso = (ahora: number) => {
+                const avance = Math.min(1, (ahora - arranque) / 900);
+                const suave = 1 - Math.pow(1 - avance, 3);
+                nodo.textContent = String(Math.round(fin * suave));
+                if (avance < 1) requestAnimationFrame(paso);
+              };
+              requestAnimationFrame(paso);
+            }
+          }
+        },
+        { threshold: 0.3 },
+      );
+      for (const banda of bandas) observa.observe(banda);
+    }
+  </script>
+
+</Base>

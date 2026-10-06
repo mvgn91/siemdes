@@ -1,0 +1,47 @@
+{
+  "name": "siemdes-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/validar-contenido.ts && astro build && node scripts/guardia-marca.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "assets": "node scripts/preparar-assets.mjs",
+    "logos": "node scripts/logos-marca.mjs",
+    "og": "node scripts/generar-og.mjs",
+    "verificar:contenido": "node scripts/validar-contenido.ts",
+    "verificar:marca": "node scripts/guardia-marca.mjs",
+    "verificar:guardia": "node scripts/probar-guardia.mjs",
+    "medir": "node scripts/medir-densidad.mjs",
+    "mapa": "node scripts/generar-mapa.mjs"
+  },
+  "dependencies": {
+    "@astrojs/react": "^7.0.0",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/barlow": "^5.3.0",
+    "astro": "^7.3.5",
+    "lucide-static": "^1.49.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

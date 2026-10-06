@@ -1,0 +1,89 @@
+{
+  "introduccion": {
+    "titulo": "Servicios",
+    "fuente": "docs/05 C25–C38, C111, V-006 · retoque de tono operador 2026-10-05 (R05.21) · entradilla retirada por el operador 2026-10-05 (R05.38)"
+  },
+  "principales": [
+    {
+      "id": "diagnostico",
+      "titulo": "Diagnóstico computarizado",
+      "texto": "Escáner en ocho marcas: códigos de falla, motor, transmisión, hidráulico, eléctrico y parámetros de trabajo.",
+      "incluye": [
+        "Lectura y borrado de códigos de falla",
+        "Fallas de motor y de transmisión",
+        "Fallas hidráulicas y eléctricas",
+        "Revisión de parámetros de trabajo"
+      ],
+      "fuente": "docs/05 C25–C38, C43, C44"
+    },
+    {
+      "id": "motores",
+      "titulo": "Motores diésel",
+      "texto": "Reparación de motor diésel, transmisiones y bombas: se revisa el conjunto, no solo la pieza.",
+      "incluye": [
+        "Reparación de motor diésel",
+        "Transmisiones",
+        "Pruebas y revisión del equipo"
+      ],
+      "fuente": "docs/05 C25–C38, C40"
+    },
+    {
+      "id": "hidraulicos",
+      "titulo": "Sistemas hidráulicos",
+      "texto": "Bombas, bancos de válvulas y cilindros: de lo más frecuente en el taller.",
+      "incluye": [
+        "Bombas y bancos de válvulas",
+        "Cilindros hidráulicos",
+        "Adaptaciones hidráulicas"
+      ],
+      "fuente": "docs/05 C40, C41"
+    },
+    {
+      "id": "electricos",
+      "titulo": "Sistemas eléctricos y electrónicos",
+      "texto": "Cableado, sensores y ECM con apoyo especializado (no es servicio propio).",
+      "incluye": [
+        "Sistemas eléctricos",
+        "Sistemas electrónicos",
+        "Reparación de ECM con respaldo especializado"
+      ],
+      "fuente": "docs/05 C34, C42"
+    },
+    {
+      "id": "campo",
+      "titulo": "Mantenimiento y servicio en campo",
+      "texto": "Chequeo preventivo y correctivo, en el taller o en sitio según el trabajo.",
+      "incluye": [
+        "Chequeo preventivo y correctivo",
+        "Servicio en campo",
+        "Atención en el taller"
+      ],
+      "fuente": "docs/05 C39, C46–C50, C55, docs/17 §8 (R01.14: el dónde se trabaja vive en Maquinaria)"
+    },
+    {
+      "id": "elevacion",
+      "titulo": "Equipos de elevación y plataformas",
+      "texto": "Plataformas y grúas telescópicas (eléctricas, gas LP, diésel) con sus fallas propias.",
+      "incluye": [
+        "Plataformas eléctricas, de gas LP y diésel",
+        "Grúas telescópicas",
+        "Montacargas y manejo de carga"
+      ],
+      "fuente": "docs/05 C21, C7–C20, C25–C38"
+    }
+  ],
+  "secundarios": {
+    "titulo": "Taller y fabricación",
+    "texto": "Trabajo de pailería y soldadura que muchas veces va pegado a la reparación del equipo.",
+    "trabajos": [
+      "Pailería",
+      "Soldadura",
+      "Cajas de volteo de 7 y 14 m³",
+      "Cajas revolvedoras",
+      "Acorazado de chasis",
+      "Adaptaciones de motor y cabina",
+      "Trompos de 8 m³ (MacNeilus / MTM)"
+    ],
+    "fuente": "docs/05 C111"
+  }
+}

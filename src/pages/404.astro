@@ -1,0 +1,57 @@
+---
+// 404 — S1-D-01.3
+//
+// Decisiones que importan:
+//  - `fueraDeIndice` en el layout: la 404 nunca lleva canonica ni entra en el indice,
+//    ni siquiera cuando el sitio se publique. Una pagina de error canonizada es la forma
+//    mas corta de que Google indexe un error.
+//  - Sin copy de datos (horarios, cobertura, marcas): aqui no se afirma nada del cliente,
+//    solo se ofrecen las secciones de la landing y WhatsApp. Es lo unico que se puede
+//    decir con verdad cuando no se sabe que pagina se buscaba (R05.12: el sitio es 1 pagina).
+//  - El numero sale de src/data/navegacion.ts (B-01 cerrado), nunca escrito a mano.
+import Base from '../layouts/Base.astro';
+import Boton from '../components/Boton.astro';
+import Rotulo from '../components/Rotulo.astro';
+import IconoLucide from '../components/IconoLucide.astro';
+import { NAVEGACION, SITIO } from '../data/navegacion';
+
+const mensaje = 'Hola, no encontré la página que buscaba.';
+const waHref = `https://wa.me/${SITIO.whatsapp.numero}?text=${encodeURIComponent(mensaje)}`;
+---
+
+<Base titulo="Página no encontrada — SIEMDES" descripcion="La dirección no existe o cambió de lugar. Desde aquí puedes ir a cualquier sección del sitio o escribir por WhatsApp." fueraDeIndice>
+  <div class="mx-auto max-w-6xl px-4 pt-8">
+    <Rotulo texto="Error 404" />
+    <div class="mt-3 flex items-center gap-4">
+      <span class="inline-flex rounded-lg bg-ambar p-2.5 text-negro" aria-hidden="true">
+        <IconoLucide nombre="compass" />
+      </span>
+      <h1 class="text-titular-1">Esta página no existe</h1>
+    </div>
+    <p class="mt-4 text-lead text-tinte-2">
+      La dirección que se escribió no corresponde a ninguna sección del sitio. Puede que el
+      enlace haya cambiado o que la dirección tenga una errata.
+    </p>
+  </div>
+
+  <div class="mx-auto mt-8 max-w-6xl px-4">
+    <h2 class="text-titular-2">Ir a una sección</h2>
+    <nav aria-label="Todas las secciones" class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        NAVEGACION.filter((item) => item.ruta !== '/').map((item) => (
+          <a
+            href={item.ruta}
+            class="rounded-xl border border-filete px-5 py-4 text-etiqueta-bloque hover:border-negro"
+          >
+            {item.etiqueta}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="mt-8 flex flex-wrap items-center gap-4">
+      <Boton href="/" variante="contorno">Ir al inicio</Boton>
+      <Boton href={waHref} cta="wa-404" externo>Escribir por WhatsApp</Boton>
+    </div>
+  </div>
+</Base>

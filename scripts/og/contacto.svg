@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generado por scripts/generar-og.mjs. No editar a mano: la fuente unica es src/data/*.json -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#18181B"/>
+  <rect width="1200" height="10" fill="#FACC15"/>
+  <image href="emblema.png" x="72" y="64" width="113" height="128"/>
+  <text x="72" y="286" font-family="Barlow" font-weight="800" font-size="30" letter-spacing="5.4" fill="#FACC15">CONTACTO</text>
+  <text x="72" y="396" font-family="Barlow" font-weight="900" font-size="74" fill="#FFFFFF">Contacto — diagnóstico por</text>
+  <text x="72" y="479" font-family="Barlow" font-weight="900" font-size="74" fill="#FFFFFF">WhatsApp</text>
+  <rect x="72" y="546" width="1056" height="2" fill="#3F3F46"/>
+  <text x="72" y="592" font-family="Barlow" font-weight="500" font-size="26" letter-spacing="2.2" fill="#A1A1AA">ARANDAS, JAL.</text>
+  <text x="1128" y="592" text-anchor="end" font-family="Barlow" font-weight="600" font-size="26" letter-spacing="1.4" fill="#FACC15">348 100 9869</text>
+</svg>

@@ -1,0 +1,23 @@
+{
+  "introduccion": {
+    "titulo": "Experiencia",
+    "fuente": "docs/00 C5, docs/05 C78 · entradilla retirada por el operador 2026-10-05 (R05.27)"
+  },
+  "capacidades": [
+    {
+      "titulo": "Motores y transmisiones",
+      "texto": "Reparación de motor diésel y transmisiones: el conjunto, no solo la pieza.",
+      "fuente": "docs/05 C22, C40"
+    },
+    {
+      "titulo": "Hidráulica",
+      "texto": "Bombas, bancos, cilindros y adaptaciones sobre equipos en trabajo.",
+      "fuente": "docs/05 C40, C41"
+    },
+    {
+      "titulo": "Eléctricos y ECM",
+      "texto": "Cableado, sensores y módulos; ECM solo con apoyo especializado.",
+      "fuente": "docs/05 C41, C42"
+    }
+  ]
+}

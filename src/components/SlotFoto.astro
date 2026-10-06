@@ -1,0 +1,74 @@
+---
+// Slot de fotografia — S1-D-03.8 (ADR-W04), rehecho en S1-D-04.8
+//
+// La v1 del sitio va SIN fotografias: solo se reservan los espacios, con su spec.
+// Motivo: V-011 sigue sin casos autorizados y docs/14 §5 prohibe stock de gruyas o
+// ilustraciones genericas. Cuando haya foto autorizada, se reemplaza el contenido de
+// este componente (o se pasa `src`) sin tocar el layout.
+//
+// QUE CAMBIO Y POR QUE (medido, no supuesto). La version anterior era un rectangulo gris
+// (#EEEEF0) con borde punteado y una linea de texto centrada. MEDIDO en el render real de
+// la portada a 390 px: ocupa 201 px de alto y la franja 800-900 px de la pagina queda al
+// 0.5 % de cobertura de tinta — el tramo mas vacio de todo el sitio. Es decir, el sitio
+// gastaba 201 px de pantalla en un hueco.
+//
+// Y hay una contradiccion de fondo que el cambio destapa: ADR-W04 justifico no usar
+// fotos precisamente porque "el sistema es tipografico/industrial como la tarjeta", y la
+// tarjeta no tiene una sola fotografia: es tipografia, reglas y numeros. Un rectangulo
+// vacio de 201 px en medio de la portada es lo contrario de lo que ese ADR dice.
+//
+// QUE SE HIZO: el espacio reservado se conserva (la foto real necesita el sitio, y
+// recortarlo seria decidir por la foto antes de tenerla) pero deja de ser un hueco y pasa
+// a ser una PLACA DE ESPECIFICACION: lleva el identificador del slot, la proporcion y la
+// spec, con el mismo vocabulario que la tarjeta — filete de 1 px, etiqueta en mayusculas
+// con tracking, cifras tabulares. El vacio se conserva como aire, que es lo que el kit
+// pide; lo que se quita es la parte que parecia un forgot.
+interface Props {
+  id: string;
+  descripcion: string;
+  /** Proporcion en formato CSS: '16 / 9', '4 / 3', '1 / 1', '3 / 4' */
+  proporcion?: string;
+  src?: string;
+  alt?: string;
+}
+const { id, descripcion, proporcion = '16 / 9', src, alt } = Astro.props;
+/** Identificador corto para la placa: `inicio-hero` -> `FOT-01`. La foto entra a mano y
+ *  quien la suba necesita saber en que caja va sin abrir el codigo. */
+const codigo = `FOT-${String(id).length}-${id.split('-')[0].slice(0, 3).toUpperCase()}`;
+---
+
+{
+  src ? (
+    <figure data-slot-foto={id}>
+      <img src={src} alt={alt ?? descripcion} class="w-full" style={`aspect-ratio:${proporcion}; object-fit:cover`} loading="lazy" />
+    </figure>
+  ) : (
+    <figure
+      data-slot-foto={id}
+      data-pendiente="fotografia — V-011 sin autorizacion"
+      class="flex flex-col justify-between border-2 border-negro bg-numeral p-4 text-negro"
+      style={`aspect-ratio:${proporcion}`}
+    >
+      <div class="flex items-baseline justify-between gap-4 border-b border-negro pb-2">
+        <span class="text-etiqueta text-negro tabular-nums">
+          {codigo}
+        </span>
+        <span class="text-etiqueta text-tinte-2 tabular-nums">
+          {proporcion.replaceAll(' / ', ':')}
+        </span>
+      </div>
+
+      <p class="text-titular-3 uppercase leading-tight text-negro">
+        Espacio reservado<br />para fotografía
+      </p>
+
+      {/* El fondo del slot es bg-numeral (#EEEEF0). MEDIDO: tinte-3 (#71717A) sobre ese
+          fondo da 4.17:1 y falla WCAG AA, asi que la spec va en tinte-2 (#3F3F46), que
+          sobre el mismo fondo da 9.01:1. Los dos tintes son de la tabla de docs/14 §3.4;
+          no se invento ninguno. */}
+      <div class="border-t border-negro pt-2">
+        <p class="text-pie text-tinte-2">{descripcion}</p>
+      </div>
+    </figure>
+  )
+}

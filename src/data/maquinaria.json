@@ -1,0 +1,79 @@
+{
+  "grupos": [
+    {
+      "id": "pesada",
+      "nombre": "Maquinaria pesada",
+      "equipos": [
+        "Tractores agrícolas",
+        "Retroexcavadoras",
+        "Excavadoras",
+        "Cargadores frontales",
+        "Motoconformadoras",
+        "Bulldozers",
+        "Maquinaria de construcción"
+      ],
+      "fuente": "docs/05 C7–C20, C21"
+    },
+    {
+      "id": "plataformas",
+      "nombre": "Plataformas y elevación",
+      "equipos": [
+        "Plataformas y elevadores"
+      ],
+      "fuente": "docs/05 C7–C20, C21"
+    },
+    {
+      "id": "montacargas",
+      "nombre": "Montacargas",
+      "equipos": [
+        "Montacargas"
+      ],
+      "fuente": "docs/05 C7–C20, C21"
+    },
+    {
+      "id": "gruas",
+      "nombre": "Grúas telescópicas",
+      "equipos": [
+        "Grúas telescópicas"
+      ],
+      "fuente": "docs/05 C7–C20, C21"
+    },
+    {
+      "id": "motores",
+      "nombre": "Motores",
+      "equipos": [
+        "Motores diésel",
+        "Camiones y vehículos diésel"
+      ],
+      "fuente": "docs/05 C7–C20, C21"
+    }
+  ],
+  "noPublicado": [
+    {
+      "equipo": "Cosechadoras",
+      "motivo": "El cliente marcó false (C9). V-006 pide lenguaje genérico y sin exclusiones publicadas, así que no se lista ni se excluye en el sitio; queda registrado aquí para no volver a descubrirlo.",
+      "fuente": "docs/05 C9, V-006"
+    }
+  ],
+  "donde": {
+    "titulo": "Modalidades de trabajo",
+    "modalidades": [
+      {
+        "titulo": "En el taller",
+        "texto": "Recepción y trabajo de equipos en el taller de Arandas, Jalisco.",
+        "fuente": "docs/05 C6, C46–C50 · retoque de tono operador 2026-10-05 (R05.21)"
+      },
+      {
+        "titulo": "En sitio",
+        "texto": "Atención en la ubicación del equipo o en las instalaciones del cliente, según el trabajo.",
+        "fuente": "docs/05 C46–C50 · retoque de tono operador 2026-10-05 (R05.21)"
+      },
+      {
+        "titulo": "Traslado",
+        "texto": "Traslado del equipo al taller o desplazamiento al sitio, según el caso.",
+        "fuente": "docs/05 C51–C55 · retoque de tono operador 2026-10-05 (R05.21)"
+      }
+    ],
+    "fuente": "docs/05 C46–C55"
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "titulo": "Elevación, maquinaria pesada y diésel en Arandas",
+    "descripcion": "Diagnóstico computarizado, motores diésel, hidráulica, eléctricos y mantenimiento de maquinaria pesada y equipos de elevación. 16 años en Arandas, Jalisco.",
+    "fuente": "docs/05 C6, C7–C20, C25–C38, C79"
+  },
+  "hero": {
+    "titular": "Tu operación importa.",
+    "titularAcento": "Tu maquinaria también.",
+    "ctaPrimario": "Solicitar diagnóstico",
+    "fuente": "docs/14 §1.3, docs/00 C5, docs/05 C25–C38, docs/17 §2, §5, docs/28 §1.6, V-017 (operador 2026-10-01: hero reducido a titular + 1 CTA, slide de assets propios)",
+    "imagenes": [
+      {
+        "src": "/hero/hero-1.webp",
+        "fuente": "V-017, docs/30 (asset propio SIEMDES: MEDIA/ASSETS WEBSITE/wallpaper hero section 1, entregado por el operador 2026-10-01)"
+      },
+      {
+        "src": "/hero/hero-2.webp",
+        "fuente": "V-017, docs/30 (asset propio SIEMDES: MEDIA/ASSETS WEBSITE/hero section wall 2.jpg, entregado por el operador 2026-10-01)"
+      }
+    ]
+  },
+  "cifras": [
+    {
+      "valor": "16",
+      "etiqueta": "años de trayectoria",
+      "fuente": "docs/05 C79"
+    },
+    {
+      "valor": "+22",
+      "etiqueta": "marcas atendidas",
+      "fuente": "V-018 (operador 2026-10-01: P&H fuera del catalogo por no tener fuente autoritativa de su logo), docs/05 C21, V-006 (la lista es referencia y no limita el alcance; de ahi el +22)"
+    },
+    {
+      "valor": "6",
+      "etiqueta": "municipios en cobertura",
+      "fuente": "V-015 (operador 2026-09-29; C6 listaba 7 y San Julian / San Miguel el Alto quedaron fuera)"
+    }
+  ],
+  "maquinariaGaleria": {
+    "titulo": "Maquinaria",
+    "imagenes": [
+      {
+        "id": "pesada",
+        "imagen": {
+          "src": "/maquinaria/excavadora-caterpillar-330.jpg",
+          "alt": "Excavadora Caterpillar 330 en obra (imagen ilustrativa, no es un trabajo de SIEMDES)",
+          "credito": "Foto: Matthew T Rader · CC BY-SA 4.0 (Commons)",
+          "ancho": 1280,
+          "alto": 853,
+          "fuente": "docs/05 C7–C20, cat.com (ficha 330), docs/28 §1.6"
+        }
+      },
+      {
+        "id": "montacargas",
+        "imagen": {
+          "src": "/maquinaria/montacargas-toyota.jpg",
+          "alt": "Montacargas Toyota de la serie 8 en almacén (imagen ilustrativa, no es un trabajo de SIEMDES)",
+          "credito": "Foto: Dinkun Chen · CC BY-SA 4.0 (Commons)",
+          "ancho": 1280,
+          "alto": 854,
+          "fuente": "docs/05 C7–C20, toyotaforklift.com (serie 8), docs/28 §1.6"
+        }
+      },
+      {
+        "id": "gruas",
+        "imagen": {
+          "src": "/maquinaria/grua-grove-rt600e.jpg",
+          "alt": "Grúa Grove RT600E en obra (imagen ilustrativa, no es un trabajo de SIEMDES)",
+          "credito": "Foto: Alf van Beem · CC0 (Commons, dominio público)",
+          "ancho": 1280,
+          "alto": 960,
+          "fuente": "docs/05 C21, manitowoc.com (ficha RT600E), docs/28 §1.6"
+        }
+      }
+    ],
+    "fuente": "docs/05 C7–C20, docs/28 §1.6"
+  },
+  "experienciaResumen": {
+    "titulo": "Experiencia para atender tu maquinaria",
+    "fuente": "docs/28 §1.6, docs/05 C79"
+  }
+}

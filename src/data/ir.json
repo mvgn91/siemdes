@@ -1,0 +1,36 @@
+{
+  "destinos": [
+    {
+      "id": "diagnostico",
+      "etiqueta": "Solicitar diagnóstico",
+      "texto": "Se abre WhatsApp con el mensaje de solicitud de diagnóstico ya escrito.",
+      "tipo": "whatsapp",
+      "solicitud": "diagnostico",
+      "fuente": "src/data/contacto.json (C102–C108)"
+    },
+    {
+      "id": "visita",
+      "etiqueta": "Solicitar visita",
+      "texto": "Se abre WhatsApp con el mensaje de solicitud de visita ya escrito.",
+      "tipo": "whatsapp",
+      "solicitud": "visita",
+      "fuente": "src/data/contacto.json (C102–C108, C46–C50)"
+    },
+    {
+      "id": "cotizacion",
+      "etiqueta": "Solicitar cotización",
+      "texto": "Se abre WhatsApp con el mensaje de solicitud de cotización ya escrito.",
+      "tipo": "whatsapp",
+      "solicitud": "cotizacion",
+      "fuente": "src/data/contacto.json (C102–C108)"
+    },
+    {
+      "id": "resenas",
+      "etiqueta": "Dejar una reseña en Google",
+      "texto": "Se abre la página de reseñas del perfil verificado de SIEMDES en Google.",
+      "tipo": "externa",
+      "url": "https://g.page/r/Cf4FSt-Xq4nPEBM/review",
+      "fuente": "src/data/navegacion.ts (verificado 2026-09-29, HTTP 200)"
+    }
+  ]
+}

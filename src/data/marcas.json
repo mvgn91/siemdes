@@ -1,0 +1,233 @@
+{
+  "introduccion": {
+    "titulo": "Algunas marcas con las que trabajamos",
+    "fuente": "docs/05 C21, V-018, docs/17 §7"
+  },
+  "grupos": [
+    {
+      "id": "pesada",
+      "nombre": "Maquinaria pesada",
+      "marcas": [
+        "Caterpillar",
+        "Case",
+        "John Deere",
+        "Komatsu",
+        "JCB",
+        "Kobelco"
+      ],
+      "fuente": "docs/05 C21"
+    },
+    {
+      "id": "plataformas",
+      "nombre": "Plataformas y elevación",
+      "marcas": [
+        "Genie",
+        "JLG",
+        "Grove"
+      ],
+      "fuente": "docs/05 C21"
+    },
+    {
+      "id": "montacargas",
+      "nombre": "Montacargas",
+      "marcas": [
+        "Mitsubishi",
+        "Nissan",
+        "Toyota",
+        "Clark",
+        "Yale"
+      ],
+      "fuente": "docs/05 C21"
+    },
+    {
+      "id": "gruas",
+      "nombre": "Grúas telescópicas",
+      "marcas": [
+        "Grove",
+        "Liebherr",
+        "Kobelco"
+      ],
+      "fuente": "docs/05 C21"
+    },
+    {
+      "id": "motores",
+      "nombre": "Motores",
+      "marcas": [
+        "Caterpillar",
+        "Navistar",
+        "International",
+        "Deutz",
+        "Yanmar",
+        "Thermo King",
+        "Cummins",
+        "Perkins"
+      ],
+      "fuente": "docs/05 C21"
+    }
+  ],
+  "logos": [
+    {
+      "id": "Caterpillar",
+      "archivo": "/marcas/logos/caterpillar.svg",
+      "perfil": "caterpillar.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial caterpillar.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Case",
+      "archivo": "/marcas/logos/case.png",
+      "perfil": "caseconstruction.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial caseconstruction.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "John Deere",
+      "archivo": "/marcas/logos/john-deere.svg",
+      "perfil": "deere.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial deere.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Komatsu",
+      "archivo": "/marcas/logos/komatsu.svg",
+      "perfil": "commons.wikimedia.org",
+      "fuente": "File:Komatsu company logos.svg, Wikimedia Commons (dominio público, textlogo; medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "JCB",
+      "archivo": "/marcas/logos/jcb.svg",
+      "perfil": "jcb.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial jcb.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Kobelco",
+      "archivo": "/marcas/logos/kobelco.png",
+      "perfil": "kobelco.co.jp",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial kobelco.co.jp (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Genie",
+      "archivo": "/marcas/logos/genie.png",
+      "perfil": "genie.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial genie.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "JLG",
+      "archivo": "/marcas/logos/jlg.png",
+      "perfil": "jlg.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial jlg.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Nissan",
+      "archivo": "/marcas/logos/nissan.svg",
+      "perfil": "nissan-global.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial nissan-global.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Toyota",
+      "archivo": "/marcas/logos/toyota.svg",
+      "perfil": "toyota.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial toyota.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Clark",
+      "archivo": "/marcas/logos/clark.png",
+      "perfil": "clarkequipment.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial clarkequipment.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Liebherr",
+      "archivo": "/marcas/logos/liebherr.png",
+      "perfil": "liebherr.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial liebherr.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Navistar",
+      "archivo": "/marcas/logos/navistar.svg",
+      "perfil": "navistar.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial navistar.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "International",
+      "archivo": "/marcas/logos/international.svg",
+      "perfil": "international.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial international.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Deutz",
+      "archivo": "/marcas/logos/deutz.png",
+      "perfil": "deutz.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial deutz.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Yanmar",
+      "archivo": "/marcas/logos/yanmar.png",
+      "perfil": "yanmar.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial yanmar.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Cummins",
+      "archivo": "/marcas/logos/cummins.svg",
+      "perfil": "cummins.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial cummins.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Perkins",
+      "archivo": "/marcas/logos/perkins.png",
+      "perfil": "perkins.com",
+      "fuente": "Brandfetch MCP 2026-10-01, perfil oficial perkins.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Grove",
+      "archivo": "/marcas/logos/grove.svg",
+      "perfil": "manitowoc.com",
+      "fuente": "Logo oficial de Grove (marca de Manitowoc), descargado de manitowoc.com (menu de marcas) el 2026-10-01, docs/05 C21"
+    },
+    {
+      "id": "Mitsubishi",
+      "archivo": "/marcas/logos/mitsubishi.png",
+      "perfil": "logisnextamericas.com",
+      "fuente": "Logo oficial de Mitsubishi Forklift Trucks, descargado de logisnextamericas.com el 2026-10-01, docs/05 C21"
+    },
+    {
+      "id": "Yale",
+      "archivo": "/marcas/logos/yale.svg",
+      "perfil": "yale.com",
+      "fuente": "Logo oficial de Yale Lift Truck Technologies, descargado de yale.com el 2026-10-01 (wordmark oscuro + simbolo dorado, legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Thermo King",
+      "archivo": "/marcas/logos/thermo-king.png",
+      "perfil": "thermoking.com",
+      "fuente": "Wordmark NEGRO oficial de Thermo King, descargado del brand center oficial (dev.tkbrandcenter.thermokinginfo.com) el 2026-10-01; sustituye la variante blanca que era invisible sobre claro, docs/05 C21"
+    }
+  ],
+  "sinLogo": [],
+  "diagnosticoComputarizado": {
+    "titulo": "Diagnóstico computarizado",
+    "texto": "Revisamos tu maquinaria con equipo de diagnóstico computarizado.",
+    "marcas": [
+      "Caterpillar",
+      "Case",
+      "John Deere",
+      "JLG",
+      "Genie",
+      "Nissan",
+      "Toyota",
+      "Mitsubishi"
+    ],
+    "fuente": "docs/05 C43"
+  },
+  "motoresSistemas": {
+    "marcas": [
+      "Perkins",
+      "Caterpillar",
+      "Navistar",
+      "Cummins",
+      "Deutz",
+      "Thermo King",
+      "John Deere",
+      "International",
+      "Nissan",
+      "Toyota"
+    ],
+    "fuente": "docs/05 C24"
+  }
+}

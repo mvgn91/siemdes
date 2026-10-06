@@ -1,0 +1,54 @@
+{
+  "introduccion": {
+    "titulo": "Cobertura",
+    "fuente": "docs/05 C6, C46–C55 · retoque de tono operador 2026-10-05 (R05.21) · entradilla retirada por el operador 2026-10-05 (R05.39)"
+  },
+  "municipios": [
+    {
+      "nombre": "Arandas",
+      "esBase": true,
+      "fuente": "V-015 (operador 2026-09-29)"
+    },
+    {
+      "nombre": "Jesús María",
+      "esBase": false,
+      "fuente": "V-015 (operador 2026-09-29)"
+    },
+    {
+      "nombre": "San Ignacio",
+      "esBase": false,
+      "fuente": "V-015 (operador 2026-09-29)"
+    },
+    {
+      "nombre": "Capilla de Guadalupe",
+      "esBase": false,
+      "fuente": "V-015 (operador 2026-09-29)"
+    },
+    {
+      "nombre": "Atotonilco el Alto",
+      "esBase": false,
+      "fuente": "V-015 (operador 2026-09-29)"
+    },
+    {
+      "nombre": "Valle de Guadalupe",
+      "esBase": false,
+      "fuente": "V-015 (operador 2026-09-29)"
+    }
+  ],
+  "noPublicado": [
+    {
+      "municipio": "San Julián",
+      "motivo": "Estaba en C6 (fuente primaria del CSV del cliente) y quedó fuera por decisión del operador del 2026-09-29 (V-015). No se publica; queda registrado aquí para que la diferencia con el CSV no se lea como un error.",
+      "fuente": "docs/05 C6, V-015"
+    },
+    {
+      "municipio": "San Miguel el Alto",
+      "motivo": "Igual que San Julián: estaba en C6 y quedó fuera por V-015. Se conserva el registro de la decisión, no del descarte.",
+      "fuente": "docs/05 C6, V-015"
+    }
+  ],
+  "mapa": {
+    "cta": "Abrir en Google Maps",
+    "fuente": "operador 2026-10-05 (link del negocio) · docs/05 C6 (base), V-008 (domicilio)"
+  }
+}

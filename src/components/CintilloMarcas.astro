@@ -1,0 +1,86 @@
+---
+// Cintillo movil — reforma definitiva (docs/30), orden del operador 2026-09-30:
+// franja a lo ancho con las 22 marcas circulando en loop. Pausa en hover/foco y sin
+// movimiento con `prefers-reduced-motion` (brief §1.8). La segunda mitad va aria-hidden:
+// es la copia que cierra el loop, no contenido nuevo.
+//
+// LOGOS (2026-10-01, orden del operador): las 22 marcas del catalogo traen su logo oficial
+// — 17 de Brandfetch (perfil del fabricante), 1 textlogo de dominio publico (Wikimedia) y 4
+// del sitio oficial del fabricante (Grove, Mitsubishi, Yale, Thermo King). Cada archivo esta
+// en `marcas.json` `logos` con su `perfil` y su `fuente`; `sinLogo` quedo vacio al retirar
+// P&H del catalogo (V-018), asi que ya no hay ninguna marca en texto.
+// Un logo no se inventa ni se sustituye por el de otra marca.
+//
+// LA ALTURA SE NORMALIZA MEDIENDO EL ARCHIVO, no applyndose opinion: los 18 logos tienen
+// proporciones entre 1:1 (Cummins) y 8:1 (Liebherr, Deutz). Con una altura fija y el ancho
+// automatico, un wordmark de 8:1 queda con 6 px de alto mientras un icono cuadrado llena
+// los 48 — la franja se ve con ocho marcas gigantes y ocho casi borradas. Se lee el
+// viewBox (SVG) o la cabecera IHDR (PNG) en build y se pasa como `aspect-ratio`, con
+// `object-contain` de red: la caja manda y la imagen se ajusta dentro, nunca se estira.
+// Un logotipo deformado es un logotipo falso.
+import { readFileSync } from 'node:fs';
+import marcas from '../data/marcas.json';
+
+/** Proporcion intrinseca (ancho/alto) leida del propio archivo. null si no se pudo leer. */
+function proporcion(ruta: string): number | null {
+  try {
+    const b = readFileSync(new URL(`../../public${ruta}`, import.meta.url));
+    if (ruta.endsWith('.svg')) {
+      const caja = /viewBox="[\d.\-]+\s+[\d.\-]+\s+([\d.]+)\s+([\d.]+)"/.exec(b.toString('utf8'));
+      return caja ? Number(caja[1]) / Number(caja[2]) : null;
+    }
+    // PNG: los bytes 16-23 del IHDR son el ancho y el alto en big-endian.
+    return b.readUInt32BE(16) / b.readUInt32BE(20);
+  } catch {
+    return null;
+  }
+}
+
+const unicas: string[] = [...new Set(marcas.grupos.flatMap((grupo) => grupo.marcas))];
+const logos = new Map(marcas.logos.map((l) => [l.id, proporcion(l.archivo)] as const));
+const fila = [...unicas, ...unicas];
+---
+
+{/* R05.29: el aire del cintillo baja de 32 a 24 px en escritorio. Es de donde sale la altura
+        que el operador pidio para la hero ("le faltan unos px a la hero, de altura"), y no
+        de otra parte: el bloque cabecera+hero+cintillo medido ocupaba la ventana EXACTA
+        (holgura 0 px a 768, 800, 900, 1024 y 1080 de alto), asi que la hero no podia
+        crecer ni un pixel sin empujar el cintillo fuera de la primera imagen.
+        MEDIDO: 122 px = 32 + 56 del logo (`h-14`) + 2 de `border-y`; a `py-6` son 106 px.
+        En movil se queda en `py-8`: alli el bloque ya reserva 8.5 rem para la barra de
+        WhatsApp y su geometria ya estaba medida y aprobada. */}
+<div class="cintillo w-full overflow-hidden border-y border-filete bg-blanco py-8 lg:py-6" tabindex="0" role="marquee" aria-label="Marcas que atendemos">
+  <div class="cintillo-pista items-center">
+    {
+      fila.map((marca, indice) => {
+        const tieneLogo = logos.has(marca);
+        const ratio = logos.get(marca);
+        return (
+          <span
+            class="flex shrink-0 items-center"
+            aria-hidden={indice >= unicas.length ? 'true' : undefined}
+          >
+            {tieneLogo ? (
+              /* R04.5: carga ansiosa. Con lazy, al redimensionar entraban logos tarde y la
+                 pista de ancho max-content recalculaba a la vista (el "refresco" de O1).
+                 Son 22 archivos pequenos ya cacheados por la primera mitad: eager los deja
+                 fijos antes del primer frame. */
+              <img
+                src={marcas.logos.find((l) => l.id === marca)!.archivo}
+                alt=""
+                aria-hidden="true"
+                class="h-14 w-auto max-w-[220px] object-contain"
+                style={ratio ? `aspect-ratio:${ratio.toFixed(3)}` : undefined}
+                loading="eager"
+                decoding="async"
+              />
+            ) : (
+              <span class="text-titular-3 uppercase text-negro">{marca}</span>
+            )}
+            <span class="mx-10 inline-block h-2 w-2 rotate-45 bg-ambar" aria-hidden="true"></span>
+          </span>
+        );
+      })
+    }
+  </div>
+</div>
