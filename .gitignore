@@ -20,6 +20,7 @@ docs/
 .astro/
 .atl/
 .wrangler/
+.pagestmp/
 
 # wrangler files
 .wrangler

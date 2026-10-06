@@ -20,7 +20,7 @@
     "medir": "node scripts/medir-densidad.mjs",
     "mapa": "node scripts/generar-mapa.mjs",
     "generate-types": "wrangler types",
-    "deploy": "pnpm run build && wrangler deploy"
+    "deploy": "pnpm run build && rm -rf .pagestmp && cp -r dist/client .pagestmp && rm -f .pagestmp/wrangler.json && wrangler pages deploy .pagestmp --project-name=siemdes --force && rm -rf .pagestmp"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.3",
