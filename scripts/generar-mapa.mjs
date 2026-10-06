@@ -32,6 +32,11 @@ import { dirname, resolve } from 'node:path';
 
 const RAIZ = resolve(import.meta.dirname, '..');
 const DIST = resolve(RAIZ, 'dist');
+// R05.41 (migración Cloudflare 2026-10-06): el adapter @astrojs/cloudflare publica el
+// sitio en dist/client/ (dist/server va vacío). PUB es la raíz publicada real, con
+// fallback a dist/ por si el layout cambia.
+const PUBREL = existsSync(resolve(DIST, 'client', 'index.html')) ? 'dist/client' : 'dist';
+const PUB = resolve(RAIZ, PUBREL);
 const SALIDA = resolve(RAIZ, 'docs/16_mapa-del-sitio.md');
 
 // ─────────────────────────── utilidades de lectura ───────────────────────────
@@ -235,8 +240,8 @@ const ARCHIVOS_JSON = [
 const PAGINAS = [
   // R05.12 (D-D, landing única): el sitio es UNA página + la 404. Las 4 páginas
   // retiradas redirigen a sus secciones en `public/_redirects`.
-  { ruta: '/', archivo: 'dist/index.html', nombre: 'Inicio', proposito: 'Landing única: hero + cifras + 5 secciones (servicios, maquinaria, cobertura, experiencia, contacto).' },
-  { ruta: '/404', archivo: 'dist/404.html', nombre: '404', proposito: 'Error. Sin copy de datos del cliente, solo secciones reales.' },
+  { ruta: '/', archivo: `${PUBREL}/index.html`, nombre: 'Inicio', proposito: 'Landing única: hero + cifras + 5 secciones (servicios, maquinaria, cobertura, experiencia, contacto).' },
+  { ruta: '/404', archivo: `${PUBREL}/404.html`, nombre: '404', proposito: 'Error. Sin copy de datos del cliente, solo secciones reales.' },
 ];
 
 const PAGINAS_IR = [
@@ -313,7 +318,7 @@ const PAGINAS_HTML = PAGINAS.map((pagina) => {
 // para la comprobacion de publicacion.
 const AUXILIARES = ['diagnostico', 'visita', 'cotizacion', 'resenas'].map((id) => ({
   ruta: `/ir/${id}/`,
-  archivo: `dist/ir/${id}/index.html`,
+  archivo: `${PUBREL}/ir/${id}/index.html`,
 }));
 
 const BLOB = [...PAGINAS_HTML.map((p) => p.html), ...AUXILIARES.map((p) => leer(p.archivo))]
@@ -343,9 +348,9 @@ const publicada = (texto) => {
 
 // Archivos de rastreo tal como quedan en el build. Se leen del dist y no se transcriben.
 const ARCHIVOS_RASTREO = {
-  robots: existsSync(resolve(DIST, 'robots.txt')) ? readFileSync(resolve(DIST, 'robots.txt'), 'utf8') : null,
-  sitemap: existsSync(resolve(DIST, 'sitemap-0.xml'))
-    ? [...readFileSync(resolve(DIST, 'sitemap-0.xml'), 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)].map((c) => c[1])
+  robots: existsSync(resolve(PUB, 'robots.txt')) ? readFileSync(resolve(PUB, 'robots.txt'), 'utf8') : null,
+  sitemap: existsSync(resolve(PUB, 'sitemap-0.xml'))
+    ? [...readFileSync(resolve(PUB, 'sitemap-0.xml'), 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)].map((c) => c[1])
     : [],
 };
 
@@ -637,7 +642,7 @@ w(
   'Su contenido es el mismo salvo la etiqueta y la explicación.', ''
 );
 for (const destino of datos['src/data/ir.json'].destinos) {
-  const html = leer(`dist/ir/${destino.id}/index.html`);
+  const html = leer(`${PUBREL}/ir/${destino.id}/index.html`);
   const visible = textoVisible(cuerpoPrincipal(html));
   w(`**\`/ir/${destino.id}\` — ${destino.etiqueta}**`, '');
   for (const linea of visible) w(`- ${escapar(linea)}`);

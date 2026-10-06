@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "node scripts/validar-contenido.ts && astro build && node scripts/guardia-marca.mjs",
-    "preview": "astro preview",
+    "preview": "pnpm run build && wrangler dev",
     "check": "astro check",
     "assets": "node scripts/preparar-assets.mjs",
     "logos": "node scripts/logos-marca.mjs",
@@ -18,9 +18,12 @@
     "verificar:marca": "node scripts/guardia-marca.mjs",
     "verificar:guardia": "node scripts/probar-guardia.mjs",
     "medir": "node scripts/medir-densidad.mjs",
-    "mapa": "node scripts/generar-mapa.mjs"
+    "mapa": "node scripts/generar-mapa.mjs",
+    "generate-types": "wrangler types",
+    "deploy": "pnpm run build && wrangler deploy"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^14.3.3",
     "@astrojs/react": "^7.0.0",
     "@astrojs/sitemap": "^3.7.4",
     "@fontsource-variable/inter": "^5.3.0",
@@ -37,7 +40,8 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "wrangler": "^4.147.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

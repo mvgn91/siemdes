@@ -130,6 +130,12 @@ function aviso(mensaje) {
 const hojas = recorrer('dist', ['.css']);
 const paginas = recorrer('dist', ['.html']);
 
+// R05.41 (migración Cloudflare 2026-10-06): el adapter @astrojs/cloudflare publica el
+// sitio en dist/client/ (dist/server va vacío). PUB es la raíz publicada real, con
+// fallback a dist/ por si el layout cambia. `recorrer` ya es recursivo, asi que hojas
+// y paginas se encuentran solas; solo las rutas ESCRITAS a mano necesitan PUB.
+const PUB = existsSync('dist/client/index.html') ? 'dist/client' : 'dist';
+
 console.log('\nGUARDIA DE MARCA — sobre dist/, lo que se publica\n' + '='.repeat(74));
 
 if (hojas.length === 0 || paginas.length === 0) {
@@ -489,7 +495,7 @@ for (const pagina of paginas) {
   const ogImagen = espera(html, /property="og:image" content="([^"]*)"/);
   if (ogImagen) {
     const relativa = new URL(ogImagen).pathname;
-    const destino = `dist${relativa}`;
+    const destino = `${PUB}${relativa}`;
     if (!existsSync(destino)) erroresDe(`og:image apunta a ${relativa} y ese archivo no existe en dist/`);
     else {
       const dims = dimensionesPng(destino);
@@ -529,10 +535,10 @@ for (const pagina of paginas) {
 }
 
 // El sitemap tiene que traer todas las URLs canonicas y NINGUNA más.
-const sitemap = paginas.length > 0 && existsSync('dist/sitemap-0.xml') ? readFileSync('dist/sitemap-0.xml', 'utf8') : '';
+const sitemap = paginas.length > 0 && existsSync(`${PUB}/sitemap-0.xml`) ? readFileSync(`${PUB}/sitemap-0.xml`, 'utf8') : '';
 if (!sitemap) {
   metaProblemas += 1;
-  error('no hay dist/sitemap-0.xml: revisa que @astrojs/sitemap siga activo');
+  error(`no hay ${PUB}/sitemap-0.xml: revisa que @astrojs/sitemap siga activo`);
 } else {
   const delSitemap = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
   for (const pagina of paginas) {
@@ -559,11 +565,11 @@ if (!sitemap) {
 }
 
 // robots.txt: tiene que existir y apuntar al sitemap del sitio configurado.
-if (!existsSync('dist/robots.txt')) {
+if (!existsSync(`${PUB}/robots.txt`)) {
   metaProblemas += 1;
-  error('no hay dist/robots.txt');
+  error(`no hay ${PUB}/robots.txt`);
 } else {
-  const robots = readFileSync('dist/robots.txt', 'utf8');
+  const robots = readFileSync(`${PUB}/robots.txt`, 'utf8');
   if (!/^Sitemap:\s*https?:\/\//m.test(robots)) {
     metaProblemas += 1;
     error('robots.txt sin linea Sitemap: con `site` sin definir, Google se queda sin sitemap');

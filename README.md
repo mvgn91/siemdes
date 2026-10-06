@@ -19,8 +19,12 @@ pnpm verificar:guardia  # 26 pruebas negativas de la guardia
 El `build` falla si el contenido no trae fuente, si el HTML/CSS rompe el kit
 de marca o si alguna prueba negativa deja de detectar su defecto.
 
-## Deploy (Cloudflare Pages)
+## Deploy (Cloudflare Workers + Assets)
 
-- Proyecto: `siemdes` → `https://siemdes.pages.dev` (+ dominio `siemdes.mx`).
-- Framework: Astro. Build: `pnpm build`. Salida: `dist`. Node 22.
+Adapter `@astrojs/cloudflare`: el build publica en `dist/client/`.
+
+- Proyecto: **`siemdes`** → `https://siemdes.jazzfatale.workers.dev`
+  (+ `https://siemdes.pages.dev` y dominio `siemdes.mx` cuando se conecten).
+- `pnpm run deploy` = `pnpm run build` + `wrangler deploy`.
+- `wrangler.jsonc` vive en el repo (sin secretos); `.wrangler/` no.
 - El sitio sale con `noindex` hasta el corte a producción.

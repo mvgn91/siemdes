@@ -5,6 +5,8 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
+import cloudflare from '@astrojs/cloudflare';
+
 export default defineConfig({
   // B-02 ABIERTO: siemdes.mx aparece "por verificar" en docs/11.
   // Este valor alimenta canonicas, sitemap.xml y el QR; cambiarlo aqui cambia todo el sitio.
@@ -28,4 +30,6 @@ export default defineConfig({
   build: {
     inlineStylesheets: 'auto',
   },
+
+  adapter: cloudflare(),
 });

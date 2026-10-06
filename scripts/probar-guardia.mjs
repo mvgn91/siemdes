@@ -20,6 +20,9 @@ import { execFileSync } from 'node:child_process';
 const RAIZ = process.cwd();
 const P = (p) => join(RAIZ, p);
 
+// R05.41 (migración Cloudflare 2026-10-06): el adapter publica en dist/client/.
+const PUB = existsSync(join(RAIZ, 'dist', 'client', 'index.html')) ? join('dist', 'client') : 'dist';
+
 /** Corre la guardia y devuelve stdout + codigo de salida. */
 function correrGuardia() {
   try {
@@ -77,7 +80,7 @@ function prueba(nombre, archivo, transformar, espera) {
 // tiene que atrapar. Y `dist/` se regenera en cada `pnpm build`, asi que la prueba no
 // puede dejar nada roto atras.
 
-const CSS_EMITIDO = join('dist', '_astro', readdirSync(join(RAIZ, 'dist', '_astro')).find((f) => f.endsWith('.css')));
+const CSS_EMITIDO = join(PUB, '_astro', readdirSync(join(RAIZ, PUB, '_astro')).find((f) => f.endsWith('.css')));
 
 const CASOS = [
   // ── 1. Color fuera de la paleta (lee dist/_astro/*.css) ────────────────────────
@@ -97,28 +100,28 @@ const CASOS = [
   // ── 2b. Tipografia que el kit descarta (Space Grotesk, lee dist/*.html) ────────
   {
     nombre: '2b · la familia que el manual descarta (Space Grotesk, docs/14 §4.1)',
-    archivo: 'dist/index.html',
+    archivo: `${PUB}/index.html`,
     transformar: (t) => t.replace('</main>', '<p>Space Grotesk</p></main>'),
     espera: 'Space Grotesk',
   },
   // ── 3. Color inline en el HTML publicado ───────────────────────────────────────
   {
     nombre: '3 · color puesto a mano en una etiqueta del HTML publicado',
-    archivo: 'dist/index.html',
+    archivo: `${PUB}/index.html`,
     transformar: (t) => t.replace('<h1 class=', '<h1 style="color:#ff0000" class='),
     espera: 'color inline',
   },
   // ── 4. Sigla vetada (lee dist/*.html) ──────────────────────────────────────────
   {
     nombre: '4 · la sigla que el kit veta (L4: SIEMES en vez de SIEMDES)',
-    archivo: 'dist/index.html',
+    archivo: `${PUB}/index.html`,
     transformar: (t) => t.replace('</main>', '<p>SIEMES</p></main>'),
     espera: 'sigla vieja',
   },
   // ── 5. Promesa prohibida (limite L1) ───────────────────────────────────────────
   {
     nombre: '5 · promesa de tiempo de entrega',
-    archivo: 'dist/index.html',
+    archivo: `${PUB}/index.html`,
     transformar: (t) => t.replace('</main>', '<p>Entrega en 48 horas</p></main>'),
     espera: 'promesa de tiempos',
   },
@@ -207,7 +210,7 @@ const CASOS = [
     // vive en tarjeta acrilica y la guardia mide el compuesto MEDIDO (#FAFAFA), que da
     // 1.47:1 — el `espera` cita lo que la guardia realmente dice, no el arquetipo.
     nombre: '12 · ambar como texto sobre fondo claro (falla AA)',
-    archivo: 'dist/index.html',
+    archivo: `${PUB}/index.html`,
     transformar: (t) => t.replace('text-chip text-tinte-2">Tractores agrícolas', 'text-chip text-ambar">Tractores agrícolas'),
     espera: 'da 1.47:1',
   },
@@ -281,7 +284,7 @@ const CASOS = [
   //     se concedia por llevar `aria-hidden` sin mirar el fondo.
   {
     nombre: '15a · numeral decorativo sin aria-hidden (se anunciaria como texto)',
-    archivo: 'dist/index.html',
+    archivo: `${PUB}/index.html`,
     transformar: (t) => t.replace('<span class="text-indice" aria-hidden="true">', '<span class="text-indice">'),
     espera: 'sin aria-hidden',
   },
@@ -300,7 +303,7 @@ const CASOS = [
   // ancla incluye la clase nueva para que el defecto se siga inyectando.
   {
     nombre: '16b · un h2 con el rol de otro nivel (el nivel visual deja de decir el semantico)',
-    archivo: 'dist/index.html',
+    archivo: `${PUB}/index.html`,
     transformar: (t) => t.replace('text-titular-2 text-negro titulo-resaltado', 'text-titular-3 text-negro titulo-resaltado'),
     espera: 'le toca "text-titular-2"',
   },
@@ -308,13 +311,13 @@ const CASOS = [
   // entradilla. Nuevo ancla: el mismo lead de la tarjeta negra de diagnostico.
   {
     nombre: '16b · el rol de h1 usado en un parrafo',
-    archivo: 'dist/index.html',
+    archivo: `${PUB}/index.html`,
     transformar: (t) => t.replace('class="mt-2 max-w-2xl text-lead text-tinte-2"', 'class="mt-2 max-w-2xl text-titular-1 text-tinte-2"'),
     espera: 'ese rol es del <h1>',
   },
   {
     nombre: '15b · marca de agua (#EEEEF0) fuera de un fondo negro = 1.16:1',
-    archivo: 'dist/index.html',
+    archivo: `${PUB}/index.html`,
     transformar: (t) =>
       t.replace('<span class="text-indice" aria-hidden="true">', '<span class="text-indice text-numeral" aria-hidden="true">'),
     espera: '1.16:1',
