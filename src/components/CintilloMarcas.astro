@@ -1,12 +1,12 @@
 ---
 // Cintillo movil — reforma definitiva (docs/30), orden del operador 2026-09-30:
-// franja a lo ancho con las 22 marcas circulando en loop. Pausa en hover/foco y sin
+// franja a lo ancho con las 23 marcas circulando en loop. Pausa en hover/foco y sin
 // movimiento con `prefers-reduced-motion` (brief §1.8). La segunda mitad va aria-hidden:
 // es la copia que cierra el loop, no contenido nuevo.
 //
-// LOGOS (2026-10-01, orden del operador): las 22 marcas del catalogo traen su logo oficial
-// — 17 de Brandfetch (perfil del fabricante), 1 textlogo de dominio publico (Wikimedia) y 4
-// del sitio oficial del fabricante (Grove, Mitsubishi, Yale, Thermo King). Cada archivo esta
+// LOGOS (2026-10-01, orden del operador): las 23 marcas del catalogo traen su logo oficial
+// — 17 de Brandfetch (perfil del fabricante), 1 textlogo de dominio publico (Wikimedia), 5
+// del sitio oficial del fabricante (Grove, Mitsubishi, Yale, Thermo King, Link-Belt). Cada archivo esta
 // en `marcas.json` `logos` con su `perfil` y su `fuente`; `sinLogo` quedo vacio al retirar
 // P&H del catalogo (V-018), asi que ya no hay ninguna marca en texto.
 // Un logo no se inventa ni se sustituye por el de otra marca.
@@ -63,7 +63,7 @@ const fila = [...unicas, ...unicas];
             {tieneLogo ? (
               /* R04.5: carga ansiosa. Con lazy, al redimensionar entraban logos tarde y la
                  pista de ancho max-content recalculaba a la vista (el "refresco" de O1).
-                 Son 22 archivos pequenos ya cacheados por la primera mitad: eager los deja
+                 Son 23 archivos pequenos ya cacheados por la primera mitad: eager los deja
                  fijos antes del primer frame. */
               <img
                 src={marcas.logos.find((l) => l.id === marca)!.archivo}

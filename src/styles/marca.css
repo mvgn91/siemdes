@@ -143,11 +143,11 @@
   --text-titular-3--font-weight: 700;
   --text-titular-3--letter-spacing: 0em;
   /* `wordmark`: la firma de marca del hero (orden del operador 2026-10-01: "SIEMDES" como
-     titulo grande, sin emblema). Rol PROPIO y no `titular-2` a proposito: la regla 16 reserva
+     titulo grande, sin emblema; 2026-10-07: "se siente muy pequeño", sube en escritorio).
+     Rol PROPIO y no `titular-2` a proposito: la regla 16 reserva
      `titular-1` y `titular-2` para los <h1>/<h2>, y el wordmark NO es un encabezado, es la
-     marca. Barlow 900 y mayusculas. Sube al escalon de 38 px (orden del operador 2026-10-01:
-     "haz mas grande SIEMDES"): comparte step con `titular-1` movil e `indice`, pero se
-     distingue por job y por caja — el H1 crece a 56 px en escritorio y el wordmark no. */
+     marca. Barlow 900 y mayusculas. Base en el escalon de 38 px; en escritorio sube a
+     56 px, el mismo escalon que `titular-1` (precedente: ya compartia escalon en movil). */
   --text-wordmark: 2.375rem; /* 38 px */
   --text-wordmark--line-height: 1.05;
   --text-wordmark--font-weight: 900;
@@ -223,13 +223,14 @@
   --text-cifra-etiqueta--letter-spacing: 0.08em;
 }
 
-/* Los dos roles que CRECEN con el ancho. En movil mandan 38 y 46 px; a partir de 64 rem
+/* Los tres roles que CRECEN con el ancho. En movil mandan 38 y 46 px; a partir de 64 rem
    pasan a 56 y 60. Se redefine la VARIABLE y no la clase, a proposito: si el tamano
    dependiera del marcado, cada h1 llevaria dos nombres de tamano y la regla 13 tendria que
    verificar un par de utilidades en vez de un rol. Asi el rol se escribe una vez. */
 @media (min-width: 64rem) {
   :root {
     --text-titular-1: 3.5rem; /* 56 px */
+    --text-wordmark: 3.5rem; /* 56 px (orden del operador 2026-10-07) */
     --text-indice: 3.5rem; /* 56 px */
     --text-cifra: 3.75rem; /* 60 px */
   }

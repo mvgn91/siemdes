@@ -45,9 +45,10 @@
       "marcas": [
         "Grove",
         "Liebherr",
-        "Kobelco"
+        "Kobelco",
+        "Link-Belt"
       ],
-      "fuente": "docs/05 C21"
+      "fuente": "docs/05 C21 · ALFREDO CONTEXTO PDF O5 (2026-10-07: alta Link-Belt, grúas)"
     },
     {
       "id": "motores",
@@ -173,6 +174,12 @@
       "archivo": "/marcas/logos/perkins.png",
       "perfil": "perkins.com",
       "fuente": "Brandfetch MCP 2026-10-01, perfil oficial perkins.com (tema oscuro, medido legible sobre blanco), docs/05 C21"
+    },
+    {
+      "id": "Link-Belt",
+      "archivo": "/marcas/logos/link-belt.svg",
+      "perfil": "linkbelt.com",
+      "fuente": "Logo Standard oficial, descargado de linkbelt.com (Link-Belt-Logo-Standard.svg, rojo de marca sobre transparente, medido legible sobre blanco) el 2026-10-07 · ALFREDO CONTEXTO PDF O5, docs/05 C21"
     },
     {
       "id": "Grove",

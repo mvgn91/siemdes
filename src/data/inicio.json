@@ -1,8 +1,8 @@
 {
   "meta": {
     "titulo": "Elevación, maquinaria pesada y diésel en Arandas",
-    "descripcion": "Diagnóstico computarizado, motores diésel, hidráulica, eléctricos y mantenimiento de maquinaria pesada y equipos de elevación. 16 años en Arandas, Jalisco.",
-    "fuente": "docs/05 C6, C7–C20, C25–C38, C79"
+    "descripcion": "Diagnóstico computarizado, motores diésel, hidráulica, eléctricos y mantenimiento de maquinaria pesada y equipos de elevación. 10 años en Arandas, Jalisco.",
+    "fuente": "docs/05 C6, C7–C20, C25–C38, C79 · ALFREDO CONTEXTO PDF O3 (2026-10-07: 16→10)"
   },
   "hero": {
     "titular": "Tu operación importa.",
@@ -22,14 +22,14 @@
   },
   "cifras": [
     {
-      "valor": "16",
+      "valor": "10",
       "etiqueta": "años de trayectoria",
-      "fuente": "docs/05 C79"
+      "fuente": "docs/05 C79 · ALFREDO CONTEXTO PDF O3 (2026-10-07: 16→10)"
     },
     {
-      "valor": "+22",
+      "valor": "+23",
       "etiqueta": "marcas atendidas",
-      "fuente": "V-018 (operador 2026-10-01: P&H fuera del catalogo por no tener fuente autoritativa de su logo), docs/05 C21, V-006 (la lista es referencia y no limita el alcance; de ahi el +22)"
+      "fuente": "V-018 (operador 2026-10-01: P&H fuera del catalogo por no tener fuente autoritativa de su logo), docs/05 C21, V-006 (la lista es referencia y no limita el alcance; de ahi el +23) · ALFREDO CONTEXTO PDF O5 (2026-10-07: alta Link-Belt)"
     },
     {
       "valor": "6",

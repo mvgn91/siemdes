@@ -54,7 +54,7 @@ const categorias = maquinaria.grupos.map((g) => ({
   equipos: g.equipos,
   imagen: imagenDe(g.id),
 }));
-// Las 22 marcas unicas, en una sola lista plana (sin agrupar por categoria).
+// Las 23 marcas unicas, en una sola lista plana (sin agrupar por categoria).
 const marcasUnicas = [...new Set(marcas.grupos.flatMap((g) => g.marcas))];
 // Iconos de "Donde se trabaja": taller, en sitio, traslado.
 const iconoDonde = (indice: number): 'factory' | 'compass' | 'truck' =>
@@ -128,7 +128,8 @@ const iconoDonde = (indice: number): 'factory' | 'compass' | 'truck' =>
       <div class="absolute inset-0 bg-negro opacity-60" aria-hidden="true"></div>
       <div class="relative mx-auto w-full max-w-6xl px-4 py-10">
         {/* Wordmark tipografico (orden del operador 2026-10-01): "SIEMDES" como titulo grande
-            en blanco, rol `wordmark` (Barlow 900, 38 px). No se usa `titular-2` porque la
+            en blanco, rol `wordmark` (Barlow 900, 38 px en movil, 56 px en escritorio
+            desde 2026-10-07). No se usa `titular-2` porque la
             guardia lo reserva para los <h2> y esto no es un encabezado. La razon social salio
             del hero por orden del operador ("ya veremos donde aplicarlo"): sigue viva en el
             pie, que la imprime literal (L6, docs/14 §1.1). */}
@@ -143,7 +144,7 @@ const iconoDonde = (indice: number): 'factory' | 'compass' | 'truck' =>
       </div>
     </section>
 
-    {/* Cintillo: solo la franja con las 22 marcas en loop (orden del operador 2026-10-01):
+    {/* Cintillo: solo la franja con las 23 marcas en loop (orden del operador 2026-10-01):
         sin presentación de sección, sin nota, sin CTA. El detalle por marca vive en
         Inicio #maquinaria (banda 02b, D-E). */}
     <CintilloMarcas />
@@ -155,7 +156,7 @@ const iconoDonde = (indice: number): 'factory' | 'compass' | 'truck' =>
       entrar en pantalla. El HTML publica el numero REAL (SEO, guardia regla 11 y el
       caso sin-JS lo ven); el script solo lo anima. Solo transform+opacity (D-D); con
       `prefers-reduced-motion` la cifra queda quieta y visible desde el primer frame.
-      Cifras exactas 16/22/8/6 (Reforma §6). Etiquetas en mayuscula compacta Inter
+      Cifras exactas 10/+23/6 (Reforma §6, ALFREDO CONTEXTO PDF O3+O5 2026-10-07). Etiquetas en mayuscula compacta Inter
       (rol `cifra-etiqueta`, O6). */}
   <section class="bg-negro text-blanco">
     <div class="mx-auto max-w-6xl px-4 py-10">
@@ -299,7 +300,7 @@ const iconoDonde = (indice: number): 'factory' | 'compass' | 'truck' =>
       </div>
 
       {/* MARCAS — un solo lugar, referencia rapida (orden del operador 2026-10-05: que no
-          nos encasillen). Las marcas NO se reparten por categoria: lista plana de las 22
+          nos encasillen). Las marcas NO se reparten por categoria: lista plana de las 23
           unicas. El cintillo de arriba ya las muestra en loop. */}
       <div class="acrilico mt-10 rounded-xl border p-6 text-negro md:p-8" data-revela>
         <h3 class="text-titular-3 text-negro">{marcas.introduccion.titulo}</h3>

@@ -56,7 +56,7 @@ function auditarFuentes(valor: unknown, fuentes = new Set<string>()): { bloques:
 }
 
 /**
- * Logos de marca: cada archivo declarado tiene que EXISTIR y las 22 marcas de `grupos`
+ * Logos de marca: cada archivo declarado tiene que EXISTIR y las 23 marcas de `grupos`
  * tienen que estar cubiertas por un logo o por un motivo escrito en `sinLogo`.
  *
  * Motivo real (2026-10-01, alta de los 18 logos de Brandfetch): el mapa de marcas cambio
