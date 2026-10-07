@@ -194,7 +194,7 @@ const palabras = (texto) => (texto.match(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu) ?? 
 // marca se publica en texto y no con archivo. Es razon, no copy: si no se declarara aqui el
 // mapa la reportaria como texto muerto en cada corrida, que es un aviso falso que entrena a
 // ignorar el aviso. Mismo caso que `archivo` y `perfil`: son rutas y dominios, no redaccion.
-const CLAVES_TECNICAS = new Set(['id', 'tipo', 'solicitud', 'url', 'numero', 'archivo', 'perfil', 'motivo', 'credito']);
+const CLAVES_TECNICAS = new Set(['id', 'tipo', 'solicitud', 'url', 'numero', 'archivo', 'perfil', 'motivo', 'credito', 'video', 'poster']);
 
 /** Claves cuyo contenido esta declarado como NO publicado: su ausencia del HTML es
  *  correcta y no se reporta como posible deriva. */
@@ -232,6 +232,7 @@ const ARCHIVOS_JSON = [
   'src/data/cobertura.json',
   'src/data/experiencia.json',
   'src/data/contacto.json',
+  'src/data/reels.json',
   'src/data/ir.json',
 ];
 

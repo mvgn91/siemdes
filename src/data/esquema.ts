@@ -421,6 +421,42 @@ export const contactoSchema = z.object({
     .min(1),
 });
 
+// ─────────────────────── Reels / trabajo real (docs/35) ───────────────────────
+/** Banda de reels verticales entre la 02 Maquinaria y la 03 Cobertura (orden del operador
+ *  2026-10-06, docs/35 §3.4). NO es una de las 5 secciones del indice (D-F): va SIN numeral,
+ *  como la banda de cifras. Los 4 casos son trabajo real de Alfredo, publicados con la
+ *  autorizacion del operador (V-011) del 2026-10-06, y el audio quedo autorizado (docs/35
+ *  §6.3). El video se autohospeda en `public/video` y lo sirve el CDN de Pages.
+ *
+ *  `marca` y `equipo` son los mismos rotulos que usa el workstream REELS para cada caso
+ *  ('Retroexcavadora 420D', 'Sprinter Mercedes-Benz', 'Montacargas Toyota', 'Motor Cummins
+ *  8.3'): la banda no inventa nombres de equipo, cita los del caso fuente.
+ *
+ *  La marca de la Sprinter (Mercedes-Benz) NO esta en el catalogo de 22 marcas atendidas;
+ *  entra por decision del operador y queda anotada aqui y en docs/35 §9. */
+export const reelsSchema = z.object({
+  /** Titulo de la banda. Sobrio y parejo con los demas (R05.18): no lleva entradilla,
+   *  como todas las secciones desde R05.39. */
+  titulo: z.string().min(3).max(60),
+  casos: z
+    .array(
+      z.object({
+        id: z.string().min(3).max(30),
+        marca: z.string().min(2).max(30),
+        equipo: z.string().min(3).max(40),
+        /** Ruta servida por Pages (mismo origen). La existencia del archivo NO la comprueba
+         *  el esquema sino `validar-contenido.ts`, con el mismo criterio que los logos: un
+         *  `src` roto es un hueco en blanco y nadie se entera hasta abrir la pagina. */
+        video: z.string().min(10).max(120),
+        poster: z.string().min(10).max(120),
+        fuente: fuenteSchema,
+      }),
+    )
+    .min(1)
+    .max(6),
+  fuente: fuenteSchema,
+});
+
 /** Registro unico: archivo JSON -> esquema. Lo consume el validador y, mas adelante, las paginas. */
 export const CONTENIDO = {
   'src/data/inicio.json': inicioSchema,
@@ -430,6 +466,7 @@ export const CONTENIDO = {
   'src/data/cobertura.json': coberturaSchema,
   'src/data/experiencia.json': experienciaSchema,
   'src/data/contacto.json': contactoSchema,
+  'src/data/reels.json': reelsSchema,
 } as const;
 
 export type Inicio = z.infer<typeof inicioSchema>;
@@ -439,3 +476,4 @@ export type Marcas = z.infer<typeof marcasSchema>;
 export type Cobertura = z.infer<typeof coberturaSchema>;
 export type Experiencia = z.infer<typeof experienciaSchema>;
 export type Contacto = z.infer<typeof contactoSchema>;
+export type Reels = z.infer<typeof reelsSchema>;

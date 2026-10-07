@@ -106,6 +106,29 @@ function auditarLogos(marcas: unknown): number {
   return fallos;
 }
 
+/**
+ * Reels (docs/35, 2026-10-06): cada `video` y cada `poster` declarado tiene que EXISTIR en
+ * `public/`. Mismo motivo escrito que en `auditarLogos`: el JSON puede ser valido, el
+ * esquema puede pasar y el `<video>` publicarse con un `src` roto, que en el navegador es un
+ * cuadro vacío con el poster ausente. Nadie se entera hasta que alguien abre la página.
+ */
+function auditarReels(reels: unknown): number {
+  let fallos = 0;
+  const r = reels as { casos?: { marca: string; video: string; poster: string }[] };
+  for (const caso of r.casos ?? []) {
+    for (const campo of ['video', 'poster'] as const) {
+      const ruta = new URL(`../public${caso[campo]}`, import.meta.url);
+      try {
+        readFileSync(ruta);
+      } catch {
+        fallos += 1;
+        console.log(`✗ reels.json · ${caso.marca}\n    ${campo}: el archivo ${caso[campo]} no existe en public/`);
+      }
+    }
+  }
+  return fallos;
+}
+
 let errores = 0;
 const fuentesGlobales = new Set<string>();
 let bloquesTotales = 0;
@@ -153,6 +176,16 @@ for (const [archivo, esquema] of Object.entries(CONTENIDO)) {
     console.log(
       `  marcas: ${unicas.size} únicas · ${conLogo} con logo · ${unicas.size - conLogo} en texto con motivo escrito` +
         (fallos === 0 ? ' · todos los archivos existen' : ''),
+    );
+  }
+
+  if (archivo === 'src/data/reels.json') {
+    const fallos = auditarReels(crudo);
+    errores += fallos;
+    const r = crudo as { casos?: unknown[] };
+    console.log(
+      `  reels: ${(r.casos ?? []).length} casos` +
+        (fallos === 0 ? ' · video y poster existen en public/' : ''),
     );
   }
 

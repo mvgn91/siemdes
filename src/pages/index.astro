@@ -24,6 +24,9 @@ import contacto from '../data/contacto.json';
 // `id` (nunca por indice): sin recortes, sin repeticiones y sin indices magicos.
 import maquinaria from '../data/maquinaria.json';
 import marcas from '../data/marcas.json';
+// Banda de reels (docs/35, orden del operador 2026-10-06): trabajo real, autohospedado en
+// /video y servido por el CDN de Cloudflare Pages.
+import reels from '../data/reels.json';
 
 const mensaje = 'Hola, quiero solicitar un diagnóstico para mi equipo.';
 const waHref = `https://wa.me/${SITIO.whatsapp.numero}?text=${encodeURIComponent(mensaje)}`;
@@ -346,6 +349,86 @@ const iconoDonde = (indice: number): 'factory' | 'compass' | 'truck' =>
       "La confianza se construye con trabajo" sale del render, del JSON y del
       esquema. Se repondrá solo con reseñas reales de Google (V-011). */}
 
+  {/* TRABAJO REAL — banda de reels (docs/35, orden del operador 2026-10-06). Va entre la 02
+      Maquinaria y la 03 Cobertura y SIN numeral: no es una de las 5 secciones del indice
+      (D-F), es una banda como la de cifras. Los 4 casos son trabajo REAL de Alfredo,
+      publicados con su autorizacion (V-011, 2026-10-06); el audio tambien quedo autorizado
+      (docs/35 §6.3). El video se autohospeda en `/video` y lo sirve el CDN de Cloudflare
+      Pages (mismo origen: sin CORS, sin mixed content y sin terceros). Se reproduce A
+      PETICION: con sonido NO hay autoplay en ningun navegador, asi que el HTML trae
+      `controls` (usable sin JS y con prefers-reduced-motion) y el script de abajo pone el
+      boton de la marca. Sin JS manda el control nativo: la mejora no rompe la funcion. */}
+  <section class="scroll-mt-24 border-t border-tinte-3 bg-negro text-blanco" id="reels">
+    <div class="mx-auto max-w-6xl px-4 py-10">
+      <h2 class="text-titular-2 text-blanco titulo-resaltado" data-revela>{reels.titulo}</h2>
+      {/* PASARELA (orden del operador 2026-10-06): en movil se ve UN video a la vez y dos
+          botones alternan; de `sm` en adelante es la rejilla (2 columnas) y a `lg`, 4. El
+          carril es `flex` + `scroll-snap` en movil, asi que el arrastre funciona sin JS;
+          los botones solo lo mueven de a una tarjeta. En escritorio el carril es `grid` y
+          el `overflow` se resetea: ahi no hay nada que desplazar. */}
+      <div data-pasarela>
+        <div
+          class="pasarela mt-8 flex snap-x snap-mandatory gap-6 overflow-x-auto sm:grid sm:grid-cols-2 sm:overflow-x-visible lg:grid-cols-4"
+          data-revela
+          data-reels
+        >
+          {
+            reels.casos.map((caso) => (
+              <figure class="acrilico-oscuro w-full shrink-0 snap-center rounded-xl border p-3 text-blanco">
+                <div class="relative overflow-hidden rounded-lg bg-negro" style="aspect-ratio: 9 / 16" data-reel>
+                  <video
+                    class="absolute inset-0 h-full w-full object-cover"
+                    poster={caso.poster}
+                    preload="none"
+                    playsinline
+                    controls
+                    aria-label={`Evidencia: ${caso.marca} ${caso.equipo}`}
+                  >
+                    <source src={caso.video} type="video/mp4" />
+                  </video>
+                  <button
+                    type="button"
+                    class="reel-play absolute inset-0 items-center justify-center"
+                    data-reel-play
+                    aria-label={`Reproducir el video: ${caso.marca} ${caso.equipo}`}
+                  >
+                    <span class="inline-flex rounded-lg bg-ambar p-3 text-negro">
+                      <IconoLucide nombre="play" ancho={28} alto={28} />
+                    </span>
+                  </button>
+                </div>
+                <figcaption class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <span class="rounded-full border border-tinte-3 px-3 py-1 text-chip text-tinte-indice">{caso.marca}</span>
+                  <span class="text-pie text-tinte-indice">{caso.equipo}</span>
+                </figcaption>
+              </figure>
+            ))
+          }
+        </div>
+        {/* Los dos botones de la pasarela: SOLO movil (`sm:hidden`). El carril de arriba ya
+            se arrastra a mano; los botones pasan de a un video y se apagan en los topes. */}
+        <div class="mt-6 flex items-center justify-center gap-3 sm:hidden">
+          <button
+            type="button"
+            class="inline-flex items-center justify-center border-2 border-ambar bg-negro p-3 text-ambar disabled:opacity-40"
+            data-reels-prev
+            aria-label="Video anterior"
+          >
+            <IconoLucide nombre="chevron-left" ancho={20} alto={20} />
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center justify-center border-2 border-ambar bg-negro p-3 text-ambar disabled:opacity-40"
+            data-reels-next
+            aria-label="Video siguiente"
+          >
+            <IconoLucide nombre="chevron-right" ancho={20} alto={20} />
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   {/* 03. COBERTURA + MAPA — R05.17 (orden del operador 2026-10-05): mapa Google de
       Arandas con el negocio ubicado (link verificado: mismo place ID del perfil).
       Marco negro con acento ámbar; municipios al lado con CTA al mapa. La base vive
@@ -534,6 +617,54 @@ const iconoDonde = (indice: number): 'factory' | 'compass' | 'truck' =>
         { threshold: 0.3 },
       );
       for (const banda of bandas) observa.observe(banda);
+    }
+  </script>
+
+  {/* Reels (docs/35): mejora progresiva. El HTML ya trae `<video controls>` (usable sin JS
+      y con prefers-reduced-motion). (1) Se cambian los controles nativos por el boton de la
+      marca; al pulsarlo vuelven los controles y el video suena (el audio va a peticion:
+      ningun navegador autoarranca con sonido). (2) La pasarela de movil mueve el carril de a
+      UNA tarjeta y apaga los botones en los topes; el arrastre a mano ya funciona por CSS. */}
+  <script>
+    for (const caja of document.querySelectorAll<HTMLElement>('[data-reel]')) {
+      const video = caja.querySelector('video');
+      const boton = caja.querySelector('[data-reel-play]');
+      if (!video || !boton) continue;
+      video.controls = false;
+      caja.classList.add('reel-listo');
+      boton.addEventListener('click', () => {
+        caja.classList.remove('reel-listo');
+        video.controls = true;
+        void video.play();
+      });
+    }
+
+    const suave = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    for (const pasarela of document.querySelectorAll<HTMLElement>('[data-pasarela]')) {
+      const carril = pasarela.querySelector<HTMLElement>('[data-reels]');
+      const prev = pasarela.querySelector<HTMLButtonElement>('[data-reels-prev]');
+      const next = pasarela.querySelector<HTMLButtonElement>('[data-reels-next]');
+      if (!carril || !prev || !next) continue;
+      // El paso es la distancia real entre dos tarjetas (ancho + hueco), medida del DOM: si
+      // cambia el `gap` o el ancho, el boton sigue saltando exactamente una tarjeta.
+      const paso = () => {
+        const a = carril.children[0];
+        const b = carril.children[1];
+        return a && b
+          ? b.getBoundingClientRect().left - a.getBoundingClientRect().left
+          : carril.clientWidth;
+      };
+      const mover = (dir: number) => carril.scrollBy({ left: dir * paso(), behavior: suave });
+      prev.addEventListener('click', () => mover(-1));
+      next.addEventListener('click', () => mover(1));
+      const topes = () => {
+        const max = carril.scrollWidth - carril.clientWidth;
+        prev.disabled = carril.scrollLeft <= 1;
+        next.disabled = carril.scrollLeft >= max - 1;
+      };
+      carril.addEventListener('scroll', topes, { passive: true });
+      addEventListener('resize', topes);
+      topes();
     }
   </script>
 

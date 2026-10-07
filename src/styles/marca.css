@@ -526,6 +526,34 @@ header nav[data-nav='principal'] a.seccion-activa {
   pointer-events: auto;
 }
 
+/* Reels (docs/35, 2026-10-06): el video se autohospeda en /video y se reproduce A PETICION
+   —con audio, porque ningun navegador autoarranca con sonido—. El HTML trae `<video
+   controls>` para que sea usable sin JS y con `prefers-reduced-motion`. Con JS, el script
+   cambia los controles nativos por el boton de play de la marca (`.reel-play`) al marcar la
+   caja con `.reel-listo`, y los devuelve al pulsarlo. Sin JS el boton no existe
+   (`display:none`) y mandan los controles nativos: la mejora no rompe la funcion.
+   El relleno del boton es `bg-ambar` con `text-negro` (11.57:1, el par del CTA). */
+/* Pasarela de reels (orden del operador 2026-10-06): en MOVIL los 4 casos se ven de a UNO
+   con dos botones para alternar; en escritorio es la rejilla de 4. El carril es un
+   contenedor horizontal con `scroll-snap`, asi que el gesto de arrastre funciona igual SIN
+   JS; los botones solo lo mueven de a una tarjeta. La barra de scroll se oculta porque el
+   control visible son los dos botones. */
+.pasarela {
+  scrollbar-width: none;
+}
+
+.pasarela::-webkit-scrollbar {
+  display: none;
+}
+
+.reel-play {
+  display: none;
+}
+
+.reel-listo .reel-play {
+  display: flex;
+}
+
 /* ─── Material acrilico (R05.26, orden del operador 2026-10-05) ───────────────────
    "No es glass real, necesito glass fluent looking": el operador pidio el material
    translucido de Fluent (relleno con alfa + backdrop-filter + filo claro), no el gris

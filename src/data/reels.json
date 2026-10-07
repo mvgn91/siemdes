@@ -1,0 +1,38 @@
+{
+  "titulo": "Evidencias",
+  "fuente": "docs/35 §3.4 (banda de reels entre 02 y 03, sin numeral); orden del operador 2026-10-06",
+  "casos": [
+    {
+      "id": "caterpillar-420d",
+      "marca": "Caterpillar",
+      "equipo": "Retroexcavadora 420D",
+      "video": "/video/caterpillar-420d.mp4",
+      "poster": "/video/caterpillar-420d-poster.jpg",
+      "fuente": "MEDIA/REELS/RAW/CATERPILLAR 420D (caso transcrito, docs/32; 'Retroexcavadora_Caterpillar_en_n...' en videos/); autorizacion operador 2026-10-06 (V-011)"
+    },
+    {
+      "id": "sprinter-mercedes",
+      "marca": "Mercedes-Benz",
+      "equipo": "Sprinter",
+      "video": "/video/sprinter-mercedes.mp4",
+      "poster": "/video/sprinter-mercedes-poster.jpg",
+      "fuente": "MEDIA/REELS/RAW/SPRINTER (caso 'Sprinter Mercedes-Benz', docs/32); marca fuera del catalogo de 22 (pendiente del operador); autorizacion 2026-10-06 (V-011)"
+    },
+    {
+      "id": "toyota-montacargas",
+      "marca": "Toyota",
+      "equipo": "Montacargas",
+      "video": "/video/toyota-montacargas.mp4",
+      "poster": "/video/toyota-montacargas-poster.jpg",
+      "fuente": "MEDIA/REELS/RAW/TOYOTA (caso 'Montacargas Toyota', docs/32); autorizacion 2026-10-06 (V-011)"
+    },
+    {
+      "id": "cummins-8-3",
+      "marca": "Cummins",
+      "equipo": "Motor 8.3",
+      "video": "/video/cummins-8-3.mp4",
+      "poster": "/video/cummins-8-3-poster.jpg",
+      "fuente": "MEDIA/REELS/RAW/CUMMINS (caso 'Motor Cummins 8.3', docs/32); V-019 abierto (SM vs ECM); autorizacion 2026-10-06 (V-011)"
+    }
+  ]
+}
