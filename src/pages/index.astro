@@ -125,7 +125,7 @@ const iconoDonde = (indice: number): 'factory' | 'compass' | 'truck' =>
           ))
         }
       </div>
-      <div class="absolute inset-0 bg-negro opacity-60" aria-hidden="true"></div>
+      <div class="absolute inset-0 bg-negro opacity-45" aria-hidden="true"></div>
       <div class="relative mx-auto w-full max-w-6xl px-4 py-10">
         {/* Wordmark tipografico (orden del operador 2026-10-01): "SIEMDES" como titulo grande
             en blanco, rol `wordmark` (Barlow 900, 38 px en movil, 56 px en escritorio
@@ -133,12 +133,12 @@ const iconoDonde = (indice: number): 'factory' | 'compass' | 'truck' =>
             guardia lo reserva para los <h2> y esto no es un encabezado. La razon social salio
             del hero por orden del operador ("ya veremos donde aplicarlo"): sigue viva en el
             pie, que la imprime literal (L6, docs/14 §1.1). */}
-        <p class="text-wordmark text-blanco">{SITIO.nombre}</p>
-        <h1 class="mt-6 max-w-3xl text-titular-1 text-blanco">
+        <p class="text-wordmark text-blanco hero-entra" style="--retraso:0ms">{SITIO.nombre}</p>
+        <h1 class="hero-entra mt-6 max-w-3xl text-titular-1 text-blanco" style="--retraso:120ms">
           {inicio.hero.titular}
           <span class="block text-ambar">{inicio.hero.titularAcento}</span>
         </h1>
-        <div class="mt-12">
+        <div class="hero-entra mt-12" style="--retraso:240ms">
           <Boton href={waHref} cta="wa-hero" variante="ambar">{inicio.hero.ctaPrimario}</Boton>
         </div>
       </div>

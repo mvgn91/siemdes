@@ -732,7 +732,12 @@ header nav[data-nav='principal'] a.seccion-activa {
    fondo. Sin JS: dos <img> apiladas y una animacion con las dos mitades del ciclo
 desfasadas 180 grados (delay negativo de medio periodo), de modo que mientras una baja la
    otra sube — un cruce real, no un corte. Ciclo 12 s, 6 s por imagen, ~1.2 s de cruce. Con
-   prefers-reduced-motion no se anima: se ve la primera imagen y ya. */
+   prefers-reduced-motion no se anima: se ve la primera imagen y ya.
+   2026-10-09 (dinamismo pedido por el operador): Ken Burns lento sobre el fundido
+   (escala 1 -> 1.07, 12 s alternado) + entrada escalonada del bloque (wordmark, H1,
+   CTA con `--retraso` 0/120/240 ms, precede: cifras). Solo transform+opacity
+   (criterio D-D): sin gradientes, sin sombras, sin blur (veto 6 intacto). La foto
+   tambien toma presencia con el overlay 60 -> 45 (plano, sin gradiente). */
 @keyframes hero-fundido {
   0% {
     opacity: 1;
@@ -751,13 +756,46 @@ desfasadas 180 grados (delay negativo de medio periodo), de modo que mientras un
   }
 }
 
+@keyframes hero-zoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07);
+  }
+}
+
+@keyframes hero-entra {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .hero-slide img {
   opacity: 0;
-  animation: hero-fundido 12s linear infinite;
+  animation:
+    hero-fundido 12s linear infinite,
+    hero-zoom 12s ease-in-out infinite alternate;
 }
 
 .hero-slide img:nth-child(2) {
-  animation-delay: -6s;
+  animation-delay:
+    -6s,
+    -6s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* `backwards`: durante el retraso rige el `from`; al terminar suelta el transform
+     (precedente R05.31: con `both` el hover de `.eleva` moriria igual que alla). */
+  .hero-entra {
+    animation: hero-entra 600ms ease backwards;
+    animation-delay: var(--retraso, 0ms);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -41,6 +41,28 @@
     "titulo": "Maquinaria",
     "imagenes": [
       {
+        "id": "plataformas",
+        "imagen": {
+          "src": "/maquinaria/plataforma-genie-s65.jpg",
+          "alt": "Brazo elevador Genie S-65 en obra (imagen ilustrativa, no es un trabajo de SIEMDES)",
+          "credito": "Foto: Chris Woodrich · CC BY-SA 4.0 (Commons)",
+          "ancho": 1280,
+          "alto": 853,
+          "fuente": "docs/05 C7–C20, genielift.com (ficha S-65), docs/28 §1.6"
+        }
+      },
+      {
+        "id": "motores",
+        "imagen": {
+          "src": "/maquinaria/motor-cummins-isx600.jpg",
+          "alt": "Motor Cummins ISX en camión (imagen ilustrativa, no es un trabajo de SIEMDES)",
+          "credito": "Foto: Panoha · CC BY-SA 3.0 (Commons)",
+          "ancho": 1280,
+          "alto": 960,
+          "fuente": "docs/05 C7–C20, cummins.com (ficha ISX), docs/28 §1.6"
+        }
+      },
+      {
         "id": "pesada",
         "imagen": {
           "src": "/maquinaria/excavadora-caterpillar-330.jpg",

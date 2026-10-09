@@ -196,7 +196,10 @@ const CASOS = [
     // la guardia, sino porque el defecto nunca llego a inyectarse.
     // 2026-10-05 (R04.23): la cifra "8 marcas con diagnostico" salio del sitio, asi que el
     // ancla pasa a "+22 marcas atendidas" (sigue cruzando contra marcas.json, regla 11).
-    transformar: (t) => t.replace(/("valor":\s*)"\+22"(?=\s*,\s*"etiqueta":\s*"marcas atendidas)/, '$1"99"'),
+    // 2026-10-09: la cifra paso a "+23" con el alta de Link-Belt ([0.61.0-siemdes]); el
+    // patron seguia buscando "+22" y la prueba corria DEBIL sin inyectar nada (25/26).
+    // Se re-ancla al valor real: la prueba vuelve a comprobar de verdad.
+    transformar: (t) => t.replace(/("valor":\s*)"\+23"(?=\s*,\s*"etiqueta":\s*"marcas atendidas)/, '$1"99"'),
     espera: 'cuadra con',
   },
   // ── 12. Contraste por debajo de AA en el HTML publicado ───────────────────────
